@@ -1,14 +1,17 @@
 
 import { Component } from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup,ValidatorFn, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { ButtonModule } from "primeng/button";
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-auth',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, ButtonModule,ToastModule],
   templateUrl: './auth.html',
-  styleUrl: './auth.css'
+  styleUrl: './auth.css',
+  providers: [MessageService]
 })
 export class Auth {
   signupForm!:FormGroup;
@@ -18,7 +21,7 @@ export class Auth {
 passwordLength:number=8;
 constructor(
   private fb:FormBuilder,
-  //private snackBar:MatSnackBarModule
+  private messageService:MessageService
 ){}
 ngOnInit(){
   this.initializeSignupForm();
@@ -31,12 +34,39 @@ initializeSignupForm():void{
     confirmPassword:['',Validators.required,]
    
     
-  })
+  },{validators: this.passwordMatchValidator })
 }
+
+  // ✅ Define the validator as a class method
+  passwordMatchValidator: ValidatorFn = (
+    control: AbstractControl
+  ): ValidationErrors | null => {
+    const password = control.get('password');
+    const confirmPassword = control.get('confirmPassword');
+
+    if (!password || !confirmPassword) return null;
+
+    if (confirmPassword.errors && !confirmPassword.errors['passwordMismatch']) {
+      return null; // Preserve other errors
+    }
+
+    if (password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    } else {
+      confirmPassword.setErrors(null);
+      return null;
+    }
+  };
+ showError() {
+        this.messageService.add({ severity: 'info', summary: 'Info', detail: 'please all the required data correctly', life: 3000 });
+    }
 validateForm(){
   this.signupForm.markAllAsTouched();
   if(!this.signupForm.valid){
-//alert('failed');
+this.showError();
+
   }
 }
+
 }
