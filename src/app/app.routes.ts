@@ -4,7 +4,10 @@ import { Auth } from './components/auth/auth';
 
 export const routes: Routes = [
     {path:'landing-page',component:LandingPage},
+    {path:'auth',component:Auth},
+    // Redirect any invalid URL to '/home'
     {path:'',component:LandingPage},
-    {path:'auth',component:Auth}
+    {path:'**',component:LandingPage}
+
 ];
 
