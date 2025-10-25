@@ -1,26 +1,98 @@
-<div class="container main_div">
-  <div class="card">
-    <form [formGroup]="signupForm">
-      <div class="row">
-        <div class="col col-md-4">
-          <input type="text" class="form-control" formControlName="name" />
+<!-- Main container to center the card vertically and horizontally on the page -->
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
+  <!-- CARD: Using Bootstrap's card component to match the original design -->
+  <div class="card shadow-lg p-4 rounded-3" style="max-width: 450px; width: 100%">
+    <div class="card-body">
+      <!-- Header Title -->
+      <h2 class="card-title text-center fw-bold h3 mb-3 text-dark pt-2">Create Your Account</h2>
+
+      <!-- Angular Reactive Form -->
+      <form [formGroup]="signupForm">
+        <!-- Name Field - Standard Bootstrap Input -->
+        <div class="mb-3">
+          <label for="name" class="form-label required fw-semibold">Name</label>
+          <input
+            id="name"
+            type="text"
+            class="form-control"
+            formControlName="name"
+            placeholder="Enter your nickname"
+          />
         </div>
-      </div>
-      <div class="row">
-        <div class="col col-md-4">
-          <input type="form-control" formControlName="email" />
+
+        <!-- Email Field - Standard Bootstrap Input -->
+        <div class="mb-3">
+          <label for="email-signup" class="form-label required fw-semibold">Email Address</label>
+          <input
+            id="email-signup"
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="Enter your email"
+          />
         </div>
-      </div>
-      <div class="row">
-        <div class="col col-md-4">
-          <input type="form-control" formControlName="password" />
+
+        <!-- Password Field - Standard Bootstrap Input -->
+        <div class="mb-3">
+          <label for="password-signup" class="form-label required fw-semibold">Password</label>
+          <input
+            id="password-signup"
+            type="password"
+            class="form-control"
+            formControlName="password"
+            placeholder="Enter your password"
+          />
         </div>
-      </div>
-      <div class="row">
-        <div class="col col-md-4">
-          <input type="form-control" formControlName="confirmPassword" />
+
+        <!-- Confirm Password Field - Standard Bootstrap Input -->
+        <div class="mb-4">
+          <label for="confirm-password" class="form-label fw-semibold required"
+            >Confirm Password</label
+          >
+          <input
+            id="confirm-password"
+            type="password"
+            class="form-control"
+            formControlName="confirmPassword"
+            placeholder="Confirm your password"
+          />
         </div>
+
+        <!-- Submit Button - Standard Bootstrap Button -->
+        <button
+          type="submit"
+          class="btn btn-primary w-100 py-2 fw-bold"
+          [disabled]="signupForm.invalid"
+        >
+          Sign Up with Email
+        </button>
+      </form>
+
+      <!-- "OR" Divider -->
+      <div class="my-4 d-flex align-items-center">
+        <hr class="flex-grow-1" />
+        <span class="mx-3 text-muted">OR</span>
+        <hr class="flex-grow-1" />
       </div>
-    </form>
+
+      <!-- Google Sign-Up Button - Standard Bootstrap Button -->
+      <button
+        class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center py-2"
+      >
+        <img
+          src="https://www.google.com/favicon.ico"
+          alt="Google icon"
+          class="me-3"
+          style="width: 20px; height: 20px"
+        />
+        <span class="fw-bold text-dark">Sign Up with Google</span>
+      </button>
+
+      <!-- Log In Link -->
+      <p class="text-center text-muted mt-4 mb-0">
+        Already have an account?
+        <a href="#" class="fw-semibold text-primary text-decoration-none">Log In</a>
+      </p>
+    </div>
   </div>
 </div>
