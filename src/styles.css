@@ -1,3 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import 'primeicons/primeicons.css';
+
+.main_div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f2f5; 
+  padding: 1rem;
+}

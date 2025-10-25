@@ -1,1 +1,26 @@
-<p>auth works!</p>
+<div class="container main_div">
+  <div class="card">
+    <form [formGroup]="signupForm">
+      <div class="row">
+        <div class="col col-md-4">
+          <input type="text" class="form-control" formControlName="name" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-4">
+          <input type="form-control" formControlName="email" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-4">
+          <input type="form-control" formControlName="password" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-4">
+          <input type="form-control" formControlName="confirmPassword" />
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
