@@ -1,8 +1,10 @@
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
 import { Component } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 @Component({
   selector: 'app-auth',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,ButtonModule,CardModule,],
   templateUrl: './auth.html',
   styleUrl: './auth.css'
 })
