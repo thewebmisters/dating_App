@@ -16,8 +16,21 @@
             type="text"
             class="form-control"
             formControlName="name"
-            placeholder="Enter your nickname"
+            placeholder="Enter your name"
           />
+          <div
+            class="text-danger mt-1"
+            style="font-size: 0.8rem"
+            *ngIf="
+              signupForm.get('name')?.invalid &&
+              (signupForm.get('name')?.dirty || signupForm.get('name')?.touched)
+            "
+          >
+            <div *ngIf="signupForm.get('name')?.errors?.['required']">Name is required</div>
+            <div *ngIf="signupForm.get('name')?.errors?.['maxlength']">
+              Maximum Name characters is {{ charLength }}
+            </div>
+          </div>
         </div>
 
         <!-- Email Field - Standard Bootstrap Input -->
@@ -30,6 +43,17 @@
             formControlName="email"
             placeholder="Enter your email"
           />
+          <div
+            class="text-danger mt-1"
+            style="font-size: 0.8rem"
+            *ngIf="
+              signupForm.get('email')?.invalid &&
+              (signupForm.get('email')?.dirty || signupForm.get('email')?.touched)
+            "
+          >
+            <div *ngIf="signupForm.get('email')?.errors?.['required']">Email is required</div>
+            <div *ngIf="signupForm.get('email')?.errors?.['pattern']">Invalid Email Address</div>
+          </div>
         </div>
 
         <!-- Password Field - Standard Bootstrap Input -->
@@ -42,6 +66,22 @@
             formControlName="password"
             placeholder="Enter your password"
           />
+          <div
+            class="text-danger mt-1"
+            style="font-size: 0.8rem"
+            *ngIf="
+              signupForm.get('password')?.invalid &&
+              (signupForm.get('password')?.dirty || signupForm.get('password')?.touched)
+            "
+          >
+            <div *ngIf="signupForm.get('password')?.errors?.['required']">Password is required</div>
+            <div *ngIf="signupForm.get('password')?.errors?.['pattern']">
+              Password must contain uppercase,Lowercase and a digit
+            </div>
+            <div *ngIf="signupForm.get('password')?.errors?.['minlength']">
+              Password must be at least {{ passwordLength }} characters.
+            </div>
+          </div>
         </div>
 
         <!-- Confirm Password Field - Standard Bootstrap Input -->
@@ -56,20 +96,29 @@
             formControlName="confirmPassword"
             placeholder="Confirm your password"
           />
+          <div
+            class="text-danger mt-1"
+            style="font-size: 0.8rem"
+            *ngIf="
+              signupForm.get('confirmPassword')?.invalid &&
+              (signupForm.get('confirmPassword')?.dirty ||
+                signupForm.get('confirmPassword')?.touched)
+            "
+          >
+            <div *ngIf="signupForm.get('confirmPassword')?.errors?.['required']">
+              Password is required
+            </div>
+          </div>
         </div>
 
         <!-- Submit Button - Standard Bootstrap Button -->
-        <button
-          type="submit"
-          class="btn btn-primary w-100 py-2 fw-bold"
-          [disabled]="signupForm.invalid"
-        >
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" (click)="validateForm()">
           Sign Up with Email
         </button>
       </form>
 
       <!-- "OR" Divider -->
-      <div class="my-4 d-flex align-items-center">
+      <div class="my-3 d-flex align-items-center">
         <hr class="flex-grow-1" />
         <span class="mx-3 text-muted">OR</span>
         <hr class="flex-grow-1" />
@@ -89,7 +138,7 @@
       </button>
 
       <!-- Log In Link -->
-      <p class="text-center text-muted mt-4 mb-0">
+      <p class="text-center text-muted mt-3 mb-0">
         Already have an account?
         <a href="#" class="fw-semibold text-primary text-decoration-none">Log In</a>
       </p>
