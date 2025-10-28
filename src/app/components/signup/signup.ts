@@ -5,15 +5,16 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from "primeng/button";
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-auth',
+  selector: 'app-signup',
   imports: [ReactiveFormsModule, CommonModule, ButtonModule,ToastModule],
-  templateUrl: './auth.html',
-  styleUrl: './auth.css',
+  templateUrl: './signup.html',
+  styleUrl: './signup.css',
   providers: [MessageService]
 })
-export class Auth {
+export class Signup {
   signupForm!:FormGroup;
   charLength:number=255;
   emailPattern:string='^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
@@ -21,7 +22,8 @@ export class Auth {
 passwordLength:number=8;
 constructor(
   private fb:FormBuilder,
-  private messageService:MessageService
+  private messageService:MessageService,
+  private router:Router
 ){}
 ngOnInit(){
   this.initializeSignupForm();
@@ -59,14 +61,16 @@ initializeSignupForm():void{
     }
   };
  showError() {
-        this.messageService.add({ severity: 'info', summary: 'Info', detail: 'please all the required data correctly', life: 3000 });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'please fill all the required data correctly', life: 3000 });
     }
 validateForm(){
   this.signupForm.markAllAsTouched();
   if(!this.signupForm.valid){
 this.showError();
-
+return;
   }
 }
-
+navigateToLogin():void{
+this.router.navigate(['/login']);
+}
 }

@@ -1,0 +1,94 @@
+<!-- Main container to center the card vertically and horizontally on the page -->
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
+  <p-toast></p-toast>
+  <!-- CARD: Using Bootstrap's card component to match the original design -->
+  <div class="card shadow-lg p-4 rounded-3" style="max-width: 450px; width: 100%">
+    <div class="card-body">
+      <!-- Header Title -->
+      <h2 class="card-title text-center fw-bold h3 mb-3 text-dark pt-2">Create Your Account</h2>
+
+      <!-- Angular Reactive Form -->
+      <form [formGroup]="loginForm">
+        <!-- Name Field - Standard Bootstrap Input -->
+
+        <!-- Email Field - Standard Bootstrap Input -->
+        <div class="form-group mb-3">
+          <label for="email-signup" class="form-label required fw-semibold">Email Address</label>
+          <input
+            id="email-signup"
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="Enter your email"
+          />
+          <div
+            class="text-danger mt-1"
+            style="font-size: 0.8rem"
+            *ngIf="
+              loginForm.get('email')?.invalid &&
+              (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)
+            "
+          >
+            <div *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</div>
+            <div *ngIf="loginForm.get('email')?.errors?.['pattern']">Invalid Email Address</div>
+          </div>
+        </div>
+
+        <!-- Password Field - Standard Bootstrap Input -->
+        <div class="form-group mb-3">
+          <label for="password-signup" class="form-label required fw-semibold">Password</label>
+          <input
+            id="password-signup"
+            type="password"
+            class="form-control"
+            formControlName="password"
+            placeholder="Enter your password"
+          />
+          <div
+            class="text-danger mt-1"
+            style="font-size: 0.8rem"
+            *ngIf="
+              loginForm.get('password')?.invalid &&
+              (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)
+            "
+          >
+            <div *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</div>
+          </div>
+        </div>
+
+        <!-- Submit Button - Standard Bootstrap Button -->
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" (click)="onClickLogin()">
+          Log In with Email
+        </button>
+      </form>
+
+      <!-- "OR" Divider -->
+      <div class="my-3 d-flex align-items-center">
+        <hr class="flex-grow-1" />
+        <span class="mx-3 text-muted">OR</span>
+        <hr class="flex-grow-1" />
+      </div>
+
+      <!-- Google Sign-Up Button - Standard Bootstrap Button -->
+      <button
+        class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center py-2"
+      >
+        <img
+          src="https://www.google.com/favicon.ico"
+          alt="Google icon"
+          class="me-3"
+          style="width: 20px; height: 20px"
+        />
+        <span class="fw-bold text-dark">Log in with Google</span>
+      </button>
+
+      <!-- Log In Link -->
+      <p class="text-center text-muted mt-3 mb-0">
+        Don't have an account?
+        <button class="btn btn-link text-decoration-none" (click)="navigateToSignUp()">
+          Sign Up
+        </button>
+      </p>
+    </div>
+  </div>
+</div>

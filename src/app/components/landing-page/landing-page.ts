@@ -17,6 +17,6 @@ export class LandingPage {
   ) {}
   ngOnInit() {}
   navigateToAuth():void{
-    this.router.navigate(['/auth']);
+    this.router.navigate(['/signup']);
   }
 }
