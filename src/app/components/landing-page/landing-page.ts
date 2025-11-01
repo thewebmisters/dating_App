@@ -1,17 +1,17 @@
 import { ButtonModule } from 'primeng/button';
 import { Component } from '@angular/core';
 import { CardModule } from 'primeng/card';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 
 @Component({
   selector: 'app-landing-page',
-  imports: [CardModule, ButtonModule],
+  imports: [CardModule, ButtonModule,RouterLink],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.css',
 })
 export class LandingPage {
-  imgSrc: string = '/assets/images/logo.jpg';
+  imgSrc: string = '/assets/images/mainlogo.jpg';
   constructor(
     private router:Router
   ) {}

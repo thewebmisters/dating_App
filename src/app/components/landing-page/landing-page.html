@@ -1,7 +1,7 @@
 <div class="container-fluid main_div">
   <div class="card text-center shadow-lg p-4 rounded-4" style="max-width: 400px">
     <img
-      src="assets/images/logo.jpg"
+      [src]="imgSrc"
       alt="Logo"
       class="rounded-circle mx-auto mb-4"
       style="width: 80px; height: 80px"
@@ -19,9 +19,14 @@
     </button>
 
     <div class="d-flex justify-content-center align-items-center gap-3">
-      <a href="#" class="text-muted fw-semibold text-decoration-none hover-primary">Writer Login</a>
-      <span class="text-muted">|</span>
-      <a href="#" class="text-muted fw-semibold text-decoration-none hover-primary">Client Login</a>
+      <a
+        [routerLink]="['/login']"
+        class="text-muted fw-semibold text-decoration-none hover-primary"
+      >
+        Login</a
+      >
+      <!-- <span class="text-muted">|</span>
+      <a href="#" class="text-muted fw-semibold text-decoration-none hover-primary">Client Login</a> -->
     </div>
   </div>
 </div>

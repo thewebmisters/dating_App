@@ -60,7 +60,15 @@ showError() {
       }
       this.authService.login(body).subscribe({
         next:(response)=>{
-          this.router.navigate(['chat-screen']);
+          if(response.data.guard==='client' || 'writer'){
+ console.log('client is',response.data.guard);
+  this.router.navigate(['chat-screen']);
+          } 
+          if(response.data.guard==='web'){
+            console.log('admin is',response.data.guard);
+           this.router.navigate(['admin-panel']); 
+          }
+         
           this.messageService.add({
               severity: 'success',
       summary: 'Success',
@@ -81,5 +89,8 @@ showError() {
     }
 navigateToSignUp():void{
   this.router.navigate(['signup']);
+}
+navigateToPsdScreen():void{
+  this.router.navigate(['forgot-password']);
 }
 }
