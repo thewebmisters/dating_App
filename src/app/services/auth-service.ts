@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
   constructor(private http: HttpClient) {}
-  baseUrl = 'http://realspark.jonahdevs.co.ke/api';
+  baseUrl = 'https://realspark.jonahdevs.co.ke/api';
   register(body: any): Observable<any> {
     const fullUrl = `${this.baseUrl}/auth/register`;
     return this.http.post<any>(fullUrl, body);
