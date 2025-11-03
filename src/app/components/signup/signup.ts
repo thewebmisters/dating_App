@@ -57,14 +57,11 @@ export class Signup {
   passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
-
-    if (!password || !confirmPassword) return null;
-
-    if (confirmPassword.errors && !confirmPassword.errors['passwordMismatch']) {
+     if (!password || !confirmPassword) return null;
+if (confirmPassword.errors && !confirmPassword.errors['passwordMismatch']) {
       return null; // Preserve other errors
     }
-
-    if (password.value !== confirmPassword.value) {
+if (password.value !== confirmPassword.value) {
       confirmPassword.setErrors({ passwordMismatch: true });
       return { passwordMismatch: true };
     } else {
@@ -107,9 +104,7 @@ export class Signup {
     };
     this.authService.register(body).subscribe({
       next: (response) => {
-        this.router.navigate(['/login']);
-        sessionStorage.setItem('email',formData?.email);
-        sessionStorage.setItem('password',formData?.password);
+         this.router.navigate(['chat-screen']);
         this.messageService.add({
       severity: 'success',
       summary: 'Success',

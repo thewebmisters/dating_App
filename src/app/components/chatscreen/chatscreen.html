@@ -1,2 +1,12 @@
-<h3>welcome to chatscreen</h3>
-<p>writer | Client chatscreen</p>
+<div class="container">
+  <p-toast></p-toast>
+  <div class="card">
+    <div class="card-body">
+      <h3 class="text-sm fw-normal">welcome {{ name }}</h3>
+      <p class="text">writer | Client chatscreen</p>
+    </div>
+  </div>
+  <div class="d-flex jusfify-content-center align-items-center text-decoration-none w-100">
+    <button class="btn btn-link btn-sm" (click)="handleLogout()">Log out</button>
+  </div>
+</div>
