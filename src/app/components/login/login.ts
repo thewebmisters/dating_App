@@ -16,8 +16,6 @@ import { ToastModule } from 'primeng/toast';
 })
 export class Login {
   loginForm!:FormGroup;
-  retrievedEmail!:string | null;
-  retrievedPassword!:string | null;
   constructor(
 private fb:FormBuilder,
 private router:Router,
@@ -26,14 +24,6 @@ private authService:AuthService
   ){}
 ngOnInit(){
   this.initializeLoginForm();
-  this.retrievedEmail= sessionStorage.getItem('email');
-  this.retrievedPassword = sessionStorage.getItem('password');
-  if(this.retrievedEmail){
-this.loginForm.patchValue({email:this.retrievedEmail});
-  }
-  if(this.retrievedPassword){
-    this.loginForm.patchValue({password:this.retrievedPassword});
-  }
 }
 initializeLoginForm():void{
   this.loginForm = this.fb.group({
@@ -60,14 +50,19 @@ showError() {
       }
       this.authService.login(body).subscribe({
         next:(response)=>{
-          if(response.data.guard==='client' || 'writer'){
- console.log('client is',response.data.guard);
-  this.router.navigate(['chat-screen']);
-          } 
-          if(response.data.guard==='web'){
-            console.log('admin is',response.data.guard);
-           this.router.navigate(['admin-panel']); 
-          }
+           this.router.navigate(['chat-screen']);
+//           if(response.data.guard==='client' || 'writer'){
+//  console.log('client is',response.data.guard);
+//  sessionStorage.setItem('email',body?.email);
+//  sessionStorage.setItem('password',body?.password);
+//   this.router.navigate(['chat-screen']);
+
+  
+//           } 
+//           if(response.data.guard==='web'){
+//             console.log('admin is',response.data.guard);
+//            this.router.navigate(['admin-panel']); 
+//           }
          
           this.messageService.add({
               severity: 'success',
@@ -75,7 +70,9 @@ showError() {
       detail: response.message,
       life: 3000,
         })
-        sessionStorage.clear();
+       if(response && response.data && response.data.access_token){
+       sessionStorage.setItem('token',response.data.access_token);
+        }
         },
         error:(err)=>{
            this.messageService.add({
@@ -87,6 +84,7 @@ showError() {
         }
       })
     }
+   
 navigateToSignUp():void{
   this.router.navigate(['signup']);
 }

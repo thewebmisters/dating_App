@@ -64,7 +64,12 @@
           </button>
         </div>
         <!-- Submit Button - Standard Bootstrap Button -->
-        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" (click)="onClickLogin()">
+        <button
+          type="submit"
+          class="btn btn-primary w-100 py-2 fw-bold"
+          (click)="onClickLogin()"
+          (keyup.enter)="onClickLogin()"
+        >
           Log In with Email
         </button>
       </form>
