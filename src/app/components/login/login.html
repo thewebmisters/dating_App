@@ -72,6 +72,9 @@
         >
           Log In with Email
         </button>
+        <div class="spinner-border text-primary" role="status" *ngIf="isLoading">
+          <span class="sr-only">Loading...</span>
+        </div>
       </form>
 
       <!-- "OR" Divider -->

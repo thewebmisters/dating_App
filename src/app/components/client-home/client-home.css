@@ -1,0 +1,25 @@
+.profile-card {
+  cursor: pointer;
+  transition: box-shadow 0.3s;
+  position: relative;
+}
+
+.profile-card:hover {
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
+}
+
+.hover-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(42, 74, 124, 0.85);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.profile-card:hover .hover-overlay {
+  opacity: 1;
+}
+
+.grayscale {
+  filter: grayscale(100%);
+}
