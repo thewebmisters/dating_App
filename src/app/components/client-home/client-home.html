@@ -1,0 +1,82 @@
+<div class="container-fluid bg-light min-vh-100 p-0">
+  <!-- Header -->
+  <header class="bg-white border-bottom p-3 shadow-sm sticky-top">
+    <div class="container d-flex justify-content-between align-items-center">
+      <!-- Logo + Title -->
+      <div class="d-flex align-items-center">
+        <img
+          src="https://placehold.co/40x40/2A4A7C/FFFFFF?text=C"
+          class="rounded-circle"
+          alt="Logo"
+        />
+        <h1 class="h4 fw-bold text-dark ms-3 m-0">Chathomebase</h1>
+      </div>
+
+      <!-- User Info -->
+      <div class="d-flex align-items-center">
+        <div class="text-end me-3">
+          <p class="fw-semibold m-0">{{ user.name }}</p>
+          <p class="text-primary fw-bold m-0">
+            Credits: {{ user.credits }} <i class="pi pi-dollar"></i>
+          </p>
+        </div>
+
+        <p-avatar
+          [image]="user.avatar"
+          shape="circle"
+          styleClass="border border-2 border-secondary"
+          size="large"
+        ></p-avatar>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container py-4">
+    <h2 class="fw-bold mb-4">Online Now</h2>
+
+    <div class="row g-4">
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2" *ngFor="let profile of profiles">
+        <p-card class="shadow-sm border-0 rounded overflow-hidden profile-card">
+          <!-- Profile Image -->
+          <div class="position-relative">
+            <img
+              [src]="profile.img"
+              class="img-fluid rounded"
+              [class.grayscale]="!profile.online"
+            />
+
+            <div
+              class="position-absolute bottom-0 start-0 p-2 text-white"
+              style="
+                background: linear-gradient(
+                  to top,
+                  rgba(0, 0, 0, 0.7),
+                  rgba(0, 0, 0, 0.3),
+                  transparent
+                );
+              "
+            >
+              <h6 class="fw-bold mb-1">{{ profile.name }}, {{ profile.age }}</h6>
+
+              <span
+                class="badge px-2 py-1"
+                [ngClass]="profile.online ? 'bg-success' : 'bg-secondary'"
+              >
+                {{ profile.online ? 'Online' : 'Offline' }}
+              </span>
+            </div>
+
+            <!-- Hover Overlay -->
+            <div
+              *ngIf="profile.online"
+              class="hover-overlay d-flex align-items-center justify-content-center"
+            >
+              <span class="fw-bold text-white fs-5">Chat Now</span>
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </div>
+  </main>
+</div>

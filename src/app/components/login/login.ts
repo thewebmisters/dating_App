@@ -16,6 +16,7 @@ import { ToastModule } from 'primeng/toast';
 })
 export class Login {
   loginForm!:FormGroup;
+  isLoading:boolean=false;
   constructor(
 private fb:FormBuilder,
 private router:Router,
@@ -49,20 +50,21 @@ showError() {
         password:formData?.password
       }
       this.authService.login(body).subscribe({
+       
         next:(response)=>{
-           this.router.navigate(['chat-screen']);
-//           if(response.data.guard==='client' || 'writer'){
+          this.isLoading=true; 
+           this.router.navigate(['client-home']);
+          if(response.data.guard==='client' ){
 //  console.log('client is',response.data.guard);
 //  sessionStorage.setItem('email',body?.email);
 //  sessionStorage.setItem('password',body?.password);
-//   this.router.navigate(['chat-screen']);
+  this.router.navigate(['client-home']);
 
   
-//           } 
-//           if(response.data.guard==='web'){
-//             console.log('admin is',response.data.guard);
-//            this.router.navigate(['admin-panel']); 
-//           }
+          } 
+          if(response.data.guard==='writer'){
+           this.router.navigate(['chat-screen']); 
+          }
          
           this.messageService.add({
               severity: 'success',
@@ -75,6 +77,7 @@ showError() {
         }
         },
         error:(err)=>{
+          this.isLoading=false;
            this.messageService.add({
               severity: 'error',
       summary: 'Error',
