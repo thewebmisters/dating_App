@@ -3,3 +3,9 @@
     margin-left:2px;
     color:#dc3545;
 }
+.loading{
+    z-index: 2;
+    top:0px;
+    left:0px;
+    position:absolute;
+}
