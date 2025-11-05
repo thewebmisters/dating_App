@@ -105,12 +105,12 @@ if (password.value !== confirmPassword.value) {
     this.authService.register(body).subscribe({
       next: (response) => {
          this.router.navigate(['chat-screen']);
-        this.messageService.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: response.message,
-      life: 3000,
-    });
+    //     this.messageService.add({
+    //   severity: 'success',
+    //   summary: 'Success',
+    //   detail: response.message,
+    //   life: 3000,
+    // });
         
       },
       error: (err) => {

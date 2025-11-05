@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { userDetailsBody, UserDTO } from '../data/auth-dto';
+import { userDetailsBody, UserDTO, userProfileDTO } from '../data/auth-dto';
 @Injectable({
   providedIn: 'root',
 })
@@ -31,6 +31,10 @@ export class AuthService {
     getUserDetails(body?:any):Observable<any>{
       const fullUrl = `${this.baseUrl}/auth/user`;
       return this.http.get<any>(fullUrl,body)
+    }
+    getProfiles():Observable<userProfileDTO[]>{
+      const fullUrl = `${this.baseUrl}/profiles`;
+      return this.http.get<userProfileDTO[]>(fullUrl)
     }
     //helper function for log out
     logout(){

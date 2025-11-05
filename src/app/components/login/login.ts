@@ -66,12 +66,12 @@ showError() {
            this.router.navigate(['chat-screen']); 
           }
          
-          this.messageService.add({
-              severity: 'success',
-      summary: 'Success',
-      detail: response.message,
-      life: 3000,
-        })
+      //     this.messageService.add({
+      //         severity: 'success',
+      // summary: 'Success',
+      // detail: response.message,
+      // life: 3000,
+      //   })
        if(response && response.data && response.data.access_token){
        sessionStorage.setItem('token',response.data.access_token);
         }
