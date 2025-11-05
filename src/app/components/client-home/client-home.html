@@ -1,15 +1,12 @@
 <div class="container-fluid bg-light min-vh-100 p-0">
+  <p-toast></p-toast>
   <!-- Header -->
   <header class="bg-white border-bottom p-3 shadow-sm sticky-top">
     <div class="container d-flex justify-content-between align-items-center">
       <!-- Logo + Title -->
       <div class="d-flex align-items-center">
-        <img
-          src="https://placehold.co/40x40/2A4A7C/FFFFFF?text=C"
-          class="rounded-circle"
-          alt="Logo"
-        />
-        <h1 class="h4 fw-bold text-dark ms-3 m-0">Chathomebase</h1>
+        <img [src]="imageSrc" class="rounded-circle" alt="Logo" style="margin: 0; width: 5%" />
+        <h1 class="h4 fw-bold text-dark ms-3 m-0">RealSpark</h1>
       </div>
 
       <!-- User Info -->
@@ -36,14 +33,14 @@
     <h2 class="fw-bold mb-4">Online Now</h2>
 
     <div class="row g-4">
-      <div class="col-6 col-sm-4 col-md-3 col-lg-2" *ngFor="let profile of profiles">
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2" *ngFor="let profile of userProfiles">
         <p-card class="shadow-sm border-0 rounded overflow-hidden profile-card">
           <!-- Profile Image -->
           <div class="position-relative">
             <img
-              [src]="profile.img"
+              [src]="profile.profile_photo_url"
               class="img-fluid rounded"
-              [class.grayscale]="!profile.online"
+              [class.grayscale]="!profile.online_status"
             />
 
             <div
@@ -61,15 +58,15 @@
 
               <span
                 class="badge px-2 py-1"
-                [ngClass]="profile.online ? 'bg-success' : 'bg-secondary'"
+                [ngClass]="profile.online_status ? 'bg-success' : 'bg-secondary'"
               >
-                {{ profile.online ? 'Online' : 'Offline' }}
+                {{ profile.online_status ? 'Online' : 'Offline' }}
               </span>
             </div>
 
             <!-- Hover Overlay -->
             <div
-              *ngIf="profile.online"
+              *ngIf="profile.online_status"
               class="hover-overlay d-flex align-items-center justify-content-center"
             >
               <span class="fw-bold text-white fs-5">Chat Now</span>
