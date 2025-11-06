@@ -3,3 +3,12 @@
     color:#dc3545;
     content:"*"
 }
+.btn-icon {
+  border: none;
+  background: transparent;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}

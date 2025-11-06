@@ -28,6 +28,10 @@ export class Signup {
   emailPattern: string = '^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
   passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]+$/;
   passwordLength: number = 8;
+  isLoading:boolean=false;
+  userDetails:any;
+  passwordVisible: boolean = false;
+  confirmPasswordVisible: boolean = false;
   constructor(
     private fb: FormBuilder,
     private messageService: MessageService,
@@ -85,6 +89,18 @@ if (password.value !== confirmPassword.value) {
       life: 3000,
     });
   }
+    /**
+   * Toggles the visibility of a password field.
+   * @param field The field to toggle ('password' or 'confirmPassword')
+   */
+  toggleVisibility(field: string): void {
+    if (field === 'password') {
+      this.passwordVisible = !this.passwordVisible;
+    } else if (field === 'confirmPassword') {
+      this.confirmPasswordVisible = !this.confirmPasswordVisible;
+    }
+  }
+
   validateForm() {
     this.signupForm.markAllAsTouched();
     if (!this.signupForm.valid) {
@@ -102,17 +118,22 @@ if (password.value !== confirmPassword.value) {
       password_confirmation: formData?.confirmPassword,
       remember: '',
     };
+    this.isLoading=true;
     this.authService.register(body).subscribe({
       next: (response) => {
-         this.router.navigate(['chat-screen']);
-    //     this.messageService.add({
-    //   severity: 'success',
-    //   summary: 'Success',
-    //   detail: response.message,
-    //   life: 3000,
-    // });
-        
-      },
+         this.userDetails=response.data.user;
+           sessionStorage.setItem('user',JSON.stringify(this.userDetails));
+         if(response.data.guard==='client' ){
+          
+
+  this.router.navigate(['client-home']);
+
+  this.isLoading=false;
+          } 
+          if(response.data.guard==='writer'){
+           this.router.navigate(['chat-screen']); 
+          }
+},
       error: (err) => {
           this.messageService.add({
       severity: 'error',
@@ -120,6 +141,7 @@ if (password.value !== confirmPassword.value) {
       detail: err.error?.message,
       life: 3000,
     });
+    this.isLoading=false;
       },
     });
   }

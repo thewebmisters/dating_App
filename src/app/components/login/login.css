@@ -3,9 +3,12 @@
     margin-left:2px;
     color:#dc3545;
 }
-.loading{
-    z-index: 2;
-    top:0px;
-    left:0px;
-    position:absolute;
+.btn-icon {
+  border: none;
+  background: transparent;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
 }

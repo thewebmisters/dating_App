@@ -37,13 +37,26 @@
         <!-- Password Field - Standard Bootstrap Input -->
         <div class="form-group mb-3">
           <label for="password-signup" class="form-label required fw-semibold">Password</label>
-          <input
-            id="password-signup"
-            type="password"
-            class="form-control"
-            formControlName="password"
-            placeholder="Enter your password"
-          />
+          <div class="input-group">
+            <input
+              id="password-signup"
+              [type]="passwordVisible ? 'text' : 'password'"
+              class="form-control"
+              formControlName="password"
+              placeholder="Enter your password"
+            />
+            <!-- The Toggle Button -->
+            <button
+              class="btn btn-outline-secondary btn-icon"
+              type="button "
+              (click)="toggleVisibility('password')"
+            >
+              <!-- Show 'eye' icon when password is not visible -->
+              <i class="pi pi-eye" *ngIf="!passwordVisible"></i>
+              <!-- Show 'eye-slash' icon when password is visible -->
+              <i class="pi pi-eye-slash" *ngIf="passwordVisible"></i>
+            </button>
+          </div>
           <div
             class="text-danger mt-1"
             style="font-size: 0.8rem"
@@ -56,27 +69,30 @@
           </div>
         </div>
         <div class="d-flex justify-content-end">
+          <!-- <a routerLink="/login">Forgot Password?</a> -->
           <button
+            type="button"
             class="btn btn-link text-sm font-semibold hover:underline text-decoration-none"
             (click)="navigateToPsdScreen()"
           >
             Forgot Password?
           </button>
         </div>
-        <!-- Submit Button - Standard Bootstrap Button -->
         <button
           type="submit"
-          class="btn btn-primary w-100 py-2 fw-bold"
+          class="btn btn-primary w-100 py-2 fw-bold d-flex justify-content-center align-items-center"
           (click)="onClickLogin()"
-          (keyup.enter)="onClickLogin()"
+          [disabled]="isLoading"
         >
-          Log In with Email<span
-            class="spinner-border text-primary loading"
-            role="status"
-            *ngIf="isLoading"
-          >
-            <span class="sr-only">Loading...</span>
-          </span>
+          <!--  ng-container to conditionally show text or spinner -->
+          <ng-container *ngIf="!isLoading; else loadingSpinner"> Log In with Email </ng-container>
+
+          <!-- This template will be shown when isLoading is true -->
+          <ng-template #loadingSpinner>
+            <div class="spinner-border spinner-border-sm" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </ng-template>
         </button>
       </form>
 
