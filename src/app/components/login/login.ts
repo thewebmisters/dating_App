@@ -3,13 +3,13 @@ import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-login',
-  imports: [ToastModule,ButtonModule,CommonModule, ReactiveFormsModule],
+  imports: [ToastModule, ButtonModule, CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 
@@ -17,6 +17,8 @@ import { ToastModule } from 'primeng/toast';
 export class Login {
   loginForm!:FormGroup;
   isLoading:boolean=false;
+  userDetails:any;
+   passwordVisible: boolean = false;
   constructor(
 private fb:FormBuilder,
 private router:Router,
@@ -32,6 +34,15 @@ email:['',Validators.required],
 password:['',Validators.required]
   })
 }
+  /**
+   * Toggles the visibility of a password field.
+   * @param field The field to toggle ('password' or 'confirmPassword')
+   */
+  toggleVisibility(field: string): void {
+    if (field === 'password') {
+      this.passwordVisible = !this.passwordVisible;
+    } 
+  }
 onClickLogin():void{
   this.loginForm.markAllAsTouched();
   if(!this.loginForm.valid){
@@ -49,15 +60,15 @@ showError() {
         email:formData?.email,
         password:formData?.password
       }
+        this.isLoading=true; 
       this.authService.login(body).subscribe({
-       
-        next:(response)=>{
-          this.isLoading=true; 
+         next:(response)=>{
+         this.userDetails=response.data.user;
+           sessionStorage.setItem('user',JSON.stringify(this.userDetails));
            this.router.navigate(['client-home']);
           if(response.data.guard==='client' ){
-//  console.log('client is',response.data.guard);
-//  sessionStorage.setItem('email',body?.email);
-//  sessionStorage.setItem('password',body?.password);
+          
+
   this.router.navigate(['client-home']);
 
   
@@ -65,16 +76,10 @@ showError() {
           if(response.data.guard==='writer'){
            this.router.navigate(['chat-screen']); 
           }
-         
-      //     this.messageService.add({
-      //         severity: 'success',
-      // summary: 'Success',
-      // detail: response.message,
-      // life: 3000,
-      //   })
        if(response && response.data && response.data.access_token){
        sessionStorage.setItem('token',response.data.access_token);
         }
+         this.isLoading=false;
         },
         error:(err)=>{
           this.isLoading=false;
@@ -84,6 +89,7 @@ showError() {
       detail:  err.error?.errors?.email,
       life: 3000,
         })
+         this.isLoading=false;
         }
       })
     }

@@ -12,16 +12,16 @@
       <!-- User Info -->
       <div class="d-flex align-items-center">
         <div class="text-end me-3">
-          <p class="fw-semibold m-0">{{ user.name }}</p>
+          <p class="fw-semibold m-0">{{ userDetails.name }}</p>
           <p class="text-primary fw-bold m-0">
-            Credits: {{ user.credits }} <i class="pi pi-dollar"></i>
+            Credits: {{ userDetails.credits_balance }} <i class="pi pi-dollar"></i>
           </p>
         </div>
 
         <p-avatar
-          [image]="user.avatar"
+          [image]="userDetails.profile_photo"
           shape="circle"
-          styleClass="border border-2 border-secondary"
+          class="mr-2"
           size="large"
         ></p-avatar>
       </div>
