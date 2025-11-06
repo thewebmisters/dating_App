@@ -21,11 +21,19 @@ interface Profile {
   imports: [AvatarModule, AvatarGroupModule, CardModule, CommonModule, Toast]
 })
 export class ClientHome{
+  userDetails:any;
   constructor(private authService:AuthService,
     private messageService:MessageService
   ){}
   ngOnInit(){
     this.fetchProfiles();
+    const user=sessionStorage.getItem('user');
+    if(user){
+      this.userDetails=JSON.parse(user);
+      console.log('user details',this.userDetails);
+    }
+    
+    
   }
   user = {
     name: 'John Doe',
