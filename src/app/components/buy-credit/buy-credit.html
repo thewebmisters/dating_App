@@ -1,0 +1,91 @@
+<div class="container-fluid bg-light min-vh-100 p-0">
+  <!-- Header -->
+  <header class="bg-white border-bottom p-3 shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center">
+      <!-- Logo and title -->
+      <div class="d-flex align-items-center">
+        <img
+          src="https://placehold.co/40x40/2A4A7C/FFFFFF?text=C"
+          class="rounded-circle"
+          alt="Logo"
+        />
+        <a class="h5 fw-bold text-dark ms-3 text-decoration-none">Chathomebase</a>
+      </div>
+
+      <!-- User area -->
+      <div class="d-flex align-items-center">
+        <a class="btn text-muted me-4 text-decoration-none" (click)="navigateToClientScreen()"
+          >&larr; Back to Chat</a
+        >
+
+        <div class="text-end me-3">
+          <p class="fw-semibold m-0">{{ userDetails.name }}</p>
+          <p class="text-primary fw-bold m-0">
+            Credits: {{ userDetails.credits_balance }}
+            <i class="pi pi-dollar"></i>
+          </p>
+        </div>
+
+        <p-avatar
+          [image]="userDetails.profile_photo"
+          shape="circle"
+          size="large"
+          class="mr-2"
+        ></p-avatar>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="container py-5">
+    <div class="text-center mb-5">
+      <i class="pi pi-verified text-warning" style="font-size: 3rem"></i>
+      <h2 class="fw-bold display-6 mt-3">Top Up Your Credits</h2>
+      <p class="text-muted mx-auto" style="max-width: 500px">
+        Choose a package to continue your conversations. More credits mean more opportunities to
+        connect.
+      </p>
+    </div>
+
+    <!-- Packages -->
+    <div class="row justify-content-center g-4">
+      <div class="col-12 col-md-4" *ngFor="let pkg of packages">
+        <p-card class="p-3 shadow-sm border-0 position-relative">
+          <!-- Best value badge -->
+          <span
+            *ngIf="pkg.best"
+            class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-primary text-white px-3 py-1"
+            style="font-size: 0.7rem"
+          >
+            Best Value
+          </span>
+
+          <div class="text-center">
+            <h4 class="fw-semibold text-dark">{{ pkg.title }}</h4>
+
+            <p class="display-5 text-primary fw-bold mt-3">{{ pkg.credits }}</p>
+
+            <p class="text-muted">
+              Credits
+              <span class="text-success fw-bold" *ngIf="pkg.bonus"> ({{ pkg.bonus }}) </span>
+            </p>
+
+            <p class="h3 fw-bold my-4">${{ pkg.price.toFixed(2) }}</p>
+
+            <button pButton class="w-100 py-3 fw-bold border-0 paypal-btn">
+              <i class="pi pi-paypal me-2"></i>
+              Pay with PayPal
+            </button>
+          </div>
+        </p-card>
+      </div>
+    </div>
+
+    <div class="text-center mt-5">
+      <p class="text-muted small">
+        <i class="pi pi-lock me-1"></i> Secure payments processed by PayPal. Your financial details
+        are never shared with us.
+      </p>
+    </div>
+  </main>
+</div>
