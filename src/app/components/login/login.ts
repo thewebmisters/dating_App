@@ -3,13 +3,13 @@ import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-login',
-  imports: [ToastModule, ButtonModule, CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [ToastModule, ButtonModule, CommonModule, ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 

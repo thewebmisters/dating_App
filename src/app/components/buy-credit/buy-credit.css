@@ -1,0 +1,12 @@
+.paypal-btn {
+  background-color: #00457c !important;
+  color: #fff !important;
+}
+
+.paypal-btn:hover {
+  opacity: 0.9;
+}
+
+.badge {
+  z-index: 10;
+}
