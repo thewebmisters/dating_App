@@ -7,6 +7,7 @@ import { AvatarGroupModule } from 'primeng/avatargroup';
 import { CardModule } from 'primeng/card';
 import { Toast } from 'primeng/toast';
 import { userProfileDTO } from '../../data/auth-dto';
+import { Router } from '@angular/router';
 interface Profile {
   name: string;
   age: number;
@@ -22,27 +23,19 @@ interface Profile {
 })
 export class ClientHome{
   userDetails:any;
+   imageSrc:string = '/assets/images/mainlogo.jpg';
+ userProfiles:userProfileDTO[]=[];
   constructor(private authService:AuthService,
-    private messageService:MessageService
+    private messageService:MessageService,
+    private router:Router
   ){}
   ngOnInit(){
     this.fetchProfiles();
     const user=sessionStorage.getItem('user');
     if(user){
       this.userDetails=JSON.parse(user);
-      console.log('user details',this.userDetails);
     }
-    
-    
-  }
-  user = {
-    name: 'John Doe',
-    credits: 500,
-    avatar:
-      'https://images.unsplash.com/photo-1566753323558-f4e0952af115?auto=format&fit=crop&w=100&q=80',
-  };
-imageSrc:string = '/assets/images/mainlogo.jpg';
- userProfiles:userProfileDTO[]=[];
+    }
   fetchProfiles(){
     this.authService.getProfiles().subscribe({
       next:(response)=>{
@@ -58,5 +51,7 @@ imageSrc:string = '/assets/images/mainlogo.jpg';
       }
     })
   }
-  
+  checkCreditBal():void{
+    this.router.navigate(['/buy-credit']);
+  }
 }
