@@ -1,0 +1,12 @@
+textarea {
+  resize: none !important;
+}
+
+.flex-grow-1 {
+  flex: 1;
+}
+
+.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
