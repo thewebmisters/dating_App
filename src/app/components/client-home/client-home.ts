@@ -8,6 +8,7 @@ import { CardModule } from 'primeng/card';
 import { Toast } from 'primeng/toast';
 import { userProfileDTO } from '../../data/auth-dto';
 import { Router } from '@angular/router';
+import e from 'express';
 interface Profile {
   name: string;
   age: number;
@@ -52,6 +53,11 @@ export class ClientHome{
     })
   }
   checkCreditBal():void{
-    this.router.navigate(['/buy-credit']);
+    if(this.userDetails.credits_balance<0){
+this.router.navigate(['/buy-credit']);
+    }else{
+      this.router.navigate(['/chat-screen']);
+    }
+    
   }
 }
