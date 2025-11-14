@@ -1,3 +1,4 @@
+import { ClientChat } from './components/client-chat/client-chat';
 import { Routes } from '@angular/router';
 import { LandingPage } from './components/landing-page/landing-page';
 import { Signup } from './components/signup/signup';
@@ -17,6 +18,7 @@ export const routes: Routes = [
     {path:'admin-panel',component:AdminPanel},
     {path:'client-home',component:ClientHome},
     {path:'buy-credit',component:BuyCredit},
+    {path:'client-chat',component:ClientChat},
     // Redirect any invalid URL to '/home'
     {path:'',component:LandingPage},
     {path:'**',component:LandingPage}
