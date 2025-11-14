@@ -56,7 +56,7 @@ export class ClientHome{
     if(this.userDetails.credits_balance<0){
 this.router.navigate(['/buy-credit']);
     }else{
-      this.router.navigate(['/chat-screen']);
+      this.router.navigate(['/client-chat']);
     }
     
   }
