@@ -1,24 +1,33 @@
 <!-- Wrapper -->
 <div class="container-fluid h-100 d-flex flex-column bg-light">
+  <p-toast></p-toast>
   <!-- Header -->
   <div
     class="d-flex justify-content-between align-items-center p-3 border-bottom bg-white shadow-sm"
   >
     <div class="d-flex align-items-center">
       <img src="https://placehold.co/40x40/2A4A7C/FFFFFF?text=C" class="rounded-circle" />
-      <h1 class="fs-5 fw-bold ms-3 d-none d-sm-block">Chathomebase</h1>
+      <h1 class="fs-5 fw-bold ms-3 d-none d-sm-block">RealSpark</h1>
     </div>
     <div class="d-flex align-items-center">
       <div class="text-end me-3">
-        <p class="fw-semibold mb-0">John Doe</p>
-        <p class="text-primary fw-bold small mb-0">Credits: 495 <i class="pi pi-dollar"></i></p>
+        <p class="fw-semibold mb-0">{{ userDetails.name }}</p>
+        <p class="text-primary fw-bold small mb-0">
+          Credits: {{ userDetails.credits_balance }}<i class="pi pi-dollar"></i>
+        </p>
       </div>
-      <img
+      <p-avatar
+        [image]="userDetails.profile_photo"
+        shape="circle"
+        class="mr-2"
+        size="large"
+      ></p-avatar>
+      <!-- <img
         src="https://images.unsplash.com/photo-1566753323558-f4e0952af115?auto=format&fit=crop&w=100&q=80"
         class="rounded-circle border"
         width="48"
         height="48"
-      />
+      /> -->
     </div>
   </div>
 
@@ -30,15 +39,17 @@
     <!-- Chat Header -->
     <div class="d-flex justify-content-between align-items-center p-3 border-bottom bg-white">
       <div class="d-flex align-items-center">
-        <i class="pi pi-arrow-left text-primary fs-4"></i>
+        <i class="pi pi-arrow-left text-primary fs-4" (click)="navigateToClientHome()"></i>
         <img
           src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=100&q=80"
           width="48"
           class="rounded-circle border border-success ms-3"
         />
         <div class="ms-3">
-          <h2 class="fs-6 fw-bold mb-0">Maria</h2>
-          <span class="text-success small fw-semibold">Online</span>
+          <h2 class="fs-6 fw-bold mb-0">
+            {{ writerProfile.name }}
+          </h2>
+          <span class="text-success small fw-semibold">{{ writerProfile.online_status }}</span>
         </div>
       </div>
       <i class="pi pi-ellipsis-v text-secondary fs-4"></i>
@@ -49,19 +60,21 @@
       <p class="text-center text-muted small">Today</p>
 
       <ng-container *ngFor="let msg of messages">
-        <!-- Incoming -->
-        <div class="d-flex mb-3" *ngIf="msg.sender === 'maria'">
+        <!-- Incoming messages from the writer -->
+        <!-- The sender_id is the writer's ID -->
+        <div class="d-flex mb-3" *ngIf="msg.sender_id === writerProfile.id">
           <div class="bg-secondary p-3 rounded shadow-sm" style="max-width: 60%">
-            <p class="mb-1">{{ msg.text }}</p>
-            <span class="text-muted small">{{ msg.time }}</span>
+            <p class="mb-1">{{ msg.message }}</p>
+            <span class="text-muted small">{{ msg.created_at | date : 'shortTime' }}</span>
           </div>
         </div>
 
-        <!-- Outgoing -->
-        <div class="d-flex justify-content-end mb-3" *ngIf="msg.sender === 'john'">
+        <!-- Outgoing (Message from the Client)-->
+        <!-- The sender_id is the logged-in client's ID  -->
+        <div class="d-flex justify-content-end mb-3" *ngIf="msg.sender_id === userDetails.id">
           <div class="text-white p-3 rounded bg-primary shadow-sm" style="max-width: 60%">
-            <p class="mb-1">{{ msg.text }}</p>
-            <span class="small opacity-75">{{ msg.time }}</span>
+            <p class="mb-1">{{ msg.message }}</p>
+            <span class="small opacity-75">{{ msg.created_at | date : 'shortTime' }}</span>
           </div>
         </div>
       </ng-container>
@@ -75,12 +88,13 @@
           rows="1"
           class="form-control"
           placeholder="Type your message..."
+          (keydown.enter)="sendMessage(); $event.preventDefault()"
         ></textarea>
         <button
           pButton
           icon="pi pi-send"
           class="btn btn-primary"
-          [disabled]="!chatInput.trim()"
+          [disabled]="!chatInput.trim() || isSending"
           (click)="sendMessage()"
         ></button>
       </div>

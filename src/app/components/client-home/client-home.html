@@ -34,7 +34,10 @@
 
     <div class="row g-4">
       <div class="col-6 col-sm-4 col-md-3 col-lg-2" *ngFor="let profile of userProfiles">
-        <p-card class="shadow-sm border-0 rounded overflow-hidden profile-card">
+        <p-card
+          class="shadow-sm border-0 rounded overflow-hidden profile-card"
+          (click)="checkCreditBal(profile)"
+        >
           <!-- Profile Image -->
           <div class="position-relative">
             <img
@@ -58,9 +61,9 @@
 
               <span
                 class="badge px-2 py-1"
-                [ngClass]="profile.online_status ? 'bg-success' : 'bg-secondary'"
+                [ngClass]="profile.online_status === 'online' ? 'bg-success' : 'bg-secondary'"
               >
-                {{ profile.online_status ? 'Online' : 'Offline' }}
+                {{ profile.online_status }}
               </span>
             </div>
 
@@ -69,7 +72,7 @@
               *ngIf="profile.online_status"
               class="hover-overlay d-flex align-items-center justify-content-center"
             >
-              <span class="btn fw-bold text-white fs-5" (click)="checkCreditBal()">Chat Now</span>
+              <span class="btn fw-bold text-white fs-5">Chat Now</span>
             </div>
           </div>
         </p-card>
