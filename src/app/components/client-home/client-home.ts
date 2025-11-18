@@ -52,11 +52,11 @@ export class ClientHome{
       }
     })
   }
-  checkCreditBal():void{
-    if(this.userDetails.credits_balance<0){
+  checkCreditBal(profile:userProfileDTO):void{
+    if(this.userDetails.credits_balance<=0){
 this.router.navigate(['/buy-credit']);
     }else{
-      this.router.navigate(['/client-chat']);
+      this.router.navigate(['/client-chat'],{state:{writerProfile:profile}});
     }
     
   }
