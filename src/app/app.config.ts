@@ -28,6 +28,7 @@ export const appConfig: ApplicationConfig = {
       },
       ripple: true
     }),
-      MessageService
+      MessageService,
+      
   ]
 };
