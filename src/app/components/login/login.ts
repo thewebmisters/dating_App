@@ -57,36 +57,33 @@ showError() {
     login():void{
       const formData = this.loginForm.value;
       const body={
-        email:formData?.email,
-        password:formData?.password
+        identifier:formData?.email,
+        password:formData?.password,
+        //abilities:''
       }
         this.isLoading=true; 
       this.authService.login(body).subscribe({
          next:(response)=>{
-         this.userDetails=response.data.user;
-           sessionStorage.setItem('user',JSON.stringify(this.userDetails));
-           this.router.navigate(['client-home']);
-          if(response.data.guard==='client' ){
-          
-
-  this.router.navigate(['client-home']);
-
-  
-          } 
-          if(response.data.guard==='writer'){
-           this.router.navigate(['chat-screen']); 
-          }
-       if(response && response.data && response.data.access_token){
-       sessionStorage.setItem('token',response.data.access_token);
+           this.isLoading=false;
+         this.userDetails=response.user;
+          if(response && response.token){
+       sessionStorage.setItem('token',response.token);
         }
-         this.isLoading=false;
-        },
+          if(response.role==='user' ){
+           this.router.navigate(['client-home']);
+} else  if(response.role==='writer'){
+           this.router.navigate(['chat-screen']); 
+          }else{
+           this.router.navigate(['client-home']);  
+          }
+      
+       },
         error:(err)=>{
           this.isLoading=false;
            this.messageService.add({
               severity: 'error',
       summary: 'Error',
-      detail:  err.error?.errors?.email,
+      detail:  err.error?.errors?.email || err.error?.message,
       life: 3000,
         })
          this.isLoading=false;

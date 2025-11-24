@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { userProfileDTO } from '../../data/auth-dto';
+import { Writer} from '../../data/auth-dto';
 import { AvatarModule } from 'primeng/avatar';
 import { Chat, SendMessagePayload } from '../../services/chat';
 import { MessageService } from 'primeng/api';
@@ -18,7 +18,7 @@ export class ClientChat {
 
 messages: any=[];
 isSending = false; // To disable the button while sending
-writerProfile!:userProfileDTO;
+writerProfile!:Writer;
 userDetails:any;
 chatInput: string = '';
    // Access the navigation state in the constructor.

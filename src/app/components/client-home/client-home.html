@@ -10,11 +10,11 @@
       </div>
 
       <!-- User Info -->
-      <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center" *ngIf="userDetails">
         <div class="text-end me-3">
           <p class="fw-semibold m-0">{{ userDetails.name }}</p>
           <p class="text-primary fw-bold m-0">
-            Credits: {{ userDetails.credits_balance }} <i class="pi pi-dollar"></i>
+            Credits: {{ userDetails.wallet.balance }} <i class="pi pi-dollar"></i>
           </p>
         </div>
 
@@ -33,7 +33,7 @@
     <h2 class="fw-bold mb-4">Online Now</h2>
 
     <div class="row g-4">
-      <div class="col-6 col-sm-4 col-md-3 col-lg-2" *ngFor="let profile of userProfiles">
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2" *ngFor="let profile of writerProfiles">
         <p-card
           class="shadow-sm border-0 rounded overflow-hidden profile-card"
           (click)="checkCreditBal(profile)"
@@ -41,9 +41,9 @@
           <!-- Profile Image -->
           <div class="position-relative">
             <img
-              [src]="profile.profile_photo_url"
+              [src]="profile.profile_photo"
               class="img-fluid rounded"
-              [class.grayscale]="!profile.online_status"
+              [class.grayscale]="!profile.is_online"
             />
 
             <div
@@ -61,15 +61,15 @@
 
               <span
                 class="badge px-2 py-1"
-                [ngClass]="profile.online_status === 'online' ? 'bg-success' : 'bg-secondary'"
+                [ngClass]="profile.is_online ? 'bg-success' : 'bg-secondary'"
               >
-                {{ profile.online_status }}
+                {{ profile.is_online }}
               </span>
             </div>
 
             <!-- Hover Overlay -->
             <div
-              *ngIf="profile.online_status"
+              *ngIf="profile.is_active"
               class="hover-overlay d-flex align-items-center justify-content-center"
             >
               <span class="btn fw-bold text-white fs-5">Chat Now</span>
