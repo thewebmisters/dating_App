@@ -1,5 +1,5 @@
 import { AvatarModule } from 'primeng/avatar';
-import { UserDTO } from './../../data/auth-dto';
+import { AuthenticatedUserDTO, UserDTO } from './../../data/auth-dto';
 import { MessageService } from 'primeng/api';
 import { AuthService } from './../../services/auth-service';
 import { Component } from '@angular/core';
@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
 export class Chatscreen {
   email:string | null=null;
   password:string | null=null;
-  user!:UserDTO;
+  user!:AuthenticatedUserDTO;
   name:string | null=null;
     // Chat logic
   replyText = '';
@@ -105,7 +105,7 @@ fetchUserDetails(){
   }
   this.authService.getUserDetails().subscribe({
     next:(response)=>{
-      this.user=response.data;
+      this.user=response;
       this.name=this.user.name;
     },
     error:(err)=>{

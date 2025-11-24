@@ -21,24 +21,78 @@ export interface userDetailsBody {
   email: string;
   password: string;
 }
-export interface userProfileDTO{
+export interface Writer{
+      id: number;
+      name: string;
+      age: number;
+      bio: string;
+      interests: string;
+      profile_photo: string;
+      country: string;
+      city: string;
+      is_online: boolean;
+      last_seen_at: string | Date;
+      is_active: boolean;
+      is_featured: false;
+      total_chats: number;
+      response_rate: number;
+      average_response_time: string | Date;
+      total_earnings: number;
+      created_at: string | Date;
+      updated_at: string | Date;
+      deleted_at: string | Date;
+      gallery: [
+        {
           id: number;
-        name: string;
-        age: number;
-        location: string;
-        bio: string;
-        occupation: string;
-        interests: string;
-        relationship_status:string;
-        profile_photo_url:string;
-        is_active: boolean;
-        is_featured: boolean;
-        is_verified: boolean;
-        view_count: number;
-        chat_count: number;
-        online_status:string;
-        last_online_at: string;
-        created_at: string;
-        updated_at: string;
-        deleted_at: null | string | Date;
+          profile_id: number;
+          image_path: string;
+          sort_order: number;
+          created_at: string | Date;
+          updated_at: string | Date;
+        }
+      ]
+}
+export interface WriterProfileDTO {
+  current_page: number;
+  data:Writer[]
+}
+export interface AuthenticatedUserDTO {
+  id: number;
+  name: string;
+  email: string;
+  email_verified_at: string;
+  created_at: string;
+  updated_at: string;
+  two_factor_confirmed_at: string;
+  phone: string;
+  phone_verified_at: string;
+  bio: string;
+  interests: [];
+  profile_photo: string;
+  last_seen_at: string | Date;
+  verification_status: string;
+  verification_id_photo: string;
+  verification_selfie: string;
+  verified_at: Date;
+  verification_notes: string;
+  country: string;
+  city: string;
+  age: number;
+  date_of_birth: string;
+  is_active: number;
+  is_suspended: number;
+  suspension_reason: string;
+  deleted_at: string | Date;
+  role: string;
+  wallet: {
+    id: number;
+    user_id: number;
+    balance: string;
+    tokens: number;
+    pending_balance: string;
+    total_earned: string;
+    total_spent: string;
+    created_at: string | Date;
+    updated_at: string | Date;
+  };
 }
