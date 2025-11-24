@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { userDetailsBody, UserDTO, userProfileDTO } from '../data/auth-dto';
+import { AuthenticatedUserDTO, WriterProfileDTO } from '../data/auth-dto';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../environments/environment.development';
+import { response } from 'express';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,13 @@ export class AuthService {
   }
 register(body: any): Observable<any> {
     const fullUrl = `${environment.baseUrl}/auth/register`;
-    return this.http.post<any>(fullUrl, body);
+    return this.http.post<any>(fullUrl, body).pipe(tap(response=>{
+      if(isPlatformBrowser(this.platformId)){
+        if(response && response.token){
+          localStorage.setItem('access_token', response.token);
+        }
+      }
+    }))
   }
 
   login(body: any): Observable<any> {
@@ -26,8 +33,8 @@ register(body: any): Observable<any> {
     return this.http.post<any>(fullUrl, body).pipe(
       tap(response => {
         if (isPlatformBrowser(this.platformId)) { // Also guard the write operation
-          if (response && response.data && response.data.access_token) {
-            localStorage.setItem('access_token', response.data.access_token);
+          if (response && response.token) {
+            localStorage.setItem('access_token', response.token);
           }
         }
       })
@@ -43,14 +50,14 @@ register(body: any): Observable<any> {
     return null;
   }
 
-  getUserDetails(body?: any): Observable<any> {
+  getUserDetails(): Observable<AuthenticatedUserDTO> {
     const fullUrl = `${environment.baseUrl}/auth/user`;
-    return this.http.get<any>(fullUrl, body);
+    return this.http.get<AuthenticatedUserDTO>(fullUrl);
   }
 
-  getProfiles(): Observable<userProfileDTO[]> {
+  getProfiles(): Observable<WriterProfileDTO> {
     const fullUrl = `${environment.baseUrl}/profiles`;
-    return this.http.get<userProfileDTO[]>(fullUrl);
+    return this.http.get<WriterProfileDTO>(fullUrl);
   }
 
   logout() {

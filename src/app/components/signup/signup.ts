@@ -47,6 +47,7 @@ export class Signup {
       {
         name: ['', [Validators.required, Validators.maxLength(255)]],
         email: ['', [Validators.required, Validators.pattern(this.emailPattern)]],
+        //email: ['', Validators.required],
         password: [
           '',
           [Validators.required, Validators.minLength(8), Validators.pattern(this.passwordPattern)],
@@ -121,18 +122,19 @@ if (password.value !== confirmPassword.value) {
     this.isLoading=true;
     this.authService.register(body).subscribe({
       next: (response) => {
-         this.userDetails=response.data.user;
-           sessionStorage.setItem('user',JSON.stringify(this.userDetails));
-         if(response.data.guard==='client' ){
-          
-
-  this.router.navigate(['client-home']);
-
-  this.isLoading=false;
-          } 
-          if(response.data.guard==='writer'){
-           this.router.navigate(['chat-screen']); 
+         this.isLoading=false;
+         this.userDetails=response.user;
+if(response && response.token){
+       sessionStorage.setItem('token',response.token);
+        }
+          if( this.userDetails.role==='user' ){
+          this.router.navigate(['client-home']);
+} else if(this.userDetails.role==='writer'){
+         this.router.navigate(['chat-screen']);
+          }else{
+           this.router.navigate(['client-home']);
           }
+           
 },
       error: (err) => {
           this.messageService.add({

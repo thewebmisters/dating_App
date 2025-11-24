@@ -6,9 +6,8 @@ import {AvatarModule} from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { CardModule } from 'primeng/card';
 import { Toast } from 'primeng/toast';
-import { userProfileDTO } from '../../data/auth-dto';
+import { AuthenticatedUserDTO, Writer, WriterProfileDTO } from '../../data/auth-dto';
 import { Router } from '@angular/router';
-import e from 'express';
 interface Profile {
   name: string;
   age: number;
@@ -23,24 +22,42 @@ interface Profile {
   imports: [AvatarModule, AvatarGroupModule, CardModule, CommonModule, Toast]
 })
 export class ClientHome{
-  userDetails:any;
+  userDetails!:AuthenticatedUserDTO;
    imageSrc:string = '/assets/images/mainlogo.jpg';
- userProfiles:userProfileDTO[]=[];
+ writerProfiles:Writer[]=[];
   constructor(private authService:AuthService,
     private messageService:MessageService,
     private router:Router
   ){}
   ngOnInit(){
+
     this.fetchProfiles();
-    const user=sessionStorage.getItem('user');
-    if(user){
-      this.userDetails=JSON.parse(user);
+    this.fetchAuthenticatedUsrDetails();
+    //const user=sessionStorage.getItem('user');
+    // if(user){
+    //   this.userDetails=JSON.parse(user);
+    // }
     }
+    fetchAuthenticatedUsrDetails():void{
+      this.authService.getUserDetails().subscribe({
+        next:(response)=>{
+          this.userDetails = response;
+          console.log('userDetails',this.userDetails);
+          },
+          error:(err)=>{
+ this.messageService.add({
+              severity: 'error',
+      summary: 'Error',
+      detail:   err.error?.message,
+      life: 3000,
+        })
+      }
+      })
     }
   fetchProfiles(){
     this.authService.getProfiles().subscribe({
       next:(response)=>{
-        this.userProfiles=response;
+        this.writerProfiles=response.data;
       },
       error:(err)=>{
          this.messageService.add({
@@ -52,8 +69,8 @@ export class ClientHome{
       }
     })
   }
-  checkCreditBal(profile:userProfileDTO):void{
-    if(this.userDetails.credits_balance<=0){
+  checkCreditBal(profile:Writer):void{
+    if(Number(this.userDetails.wallet.balance)<=0){
 this.router.navigate(['/buy-credit']);
     }else{
       this.router.navigate(['/client-chat'],{state:{writerProfile:profile}});
