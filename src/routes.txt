@@ -1,4 +1,0 @@
-/landing-page
-/signup
-/login
-/forgot-password
