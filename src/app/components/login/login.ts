@@ -72,7 +72,7 @@ showError() {
           if(response.role==='user' ){
            this.router.navigate(['client-home']);
 } else  if(response.role==='writer'){
-           this.router.navigate(['chat-screen']); 
+           this.router.navigate(['writer-dashboard']); 
           }else{
            this.router.navigate(['client-home']);  
           }
