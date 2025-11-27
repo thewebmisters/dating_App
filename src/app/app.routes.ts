@@ -18,7 +18,7 @@ export const routes: Routes = [
     {path:'admin-panel',component:AdminPanel},
     {path:'client-home',component:ClientHome},
     {path:'buy-credit',component:BuyCredit},
-    {path:'client-chat',component:ClientChat},
+    {path:'client-chat/:id',component:ClientChat},
     // Redirect any invalid URL to '/home'
     {path:'',component:LandingPage},
     {path:'**',component:LandingPage}

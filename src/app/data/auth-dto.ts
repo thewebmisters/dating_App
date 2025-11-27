@@ -96,3 +96,14 @@ export interface AuthenticatedUserDTO {
     updated_at: string | Date;
   };
 }
+export interface SendMessagePayload {
+  profile_id: number;
+  content: string;
+  attachments?: any[]; 
+}
+
+// Interface for the successful API response
+export interface SendMessageResponse {
+  message: string;
+  data: any; 
+}

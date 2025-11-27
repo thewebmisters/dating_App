@@ -1,12 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Writer} from '../../data/auth-dto';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SendMessagePayload, Writer} from '../../data/auth-dto';
 import { AvatarModule } from 'primeng/avatar';
-import { Chat, SendMessagePayload } from '../../services/chat';
+import { Chat } from '../../services/chat';
 import { MessageService } from 'primeng/api';
 import {  ToastModule } from "primeng/toast";
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-client-chat',
@@ -15,17 +16,20 @@ import {  ToastModule } from "primeng/toast";
   styleUrl: './client-chat.css'
 })
 export class ClientChat {
-
+writerProfile: Writer | null = null;
 messages: any=[];
 isSending = false; // To disable the button while sending
-writerProfile!:Writer;
 userDetails:any;
 chatInput: string = '';
+isLoading = true; 
    // Access the navigation state in the constructor.
 constructor(
   private router:Router,
   private chatService:Chat,
-  private messageService:MessageService
+  private messageService:MessageService,
+  private route: ActivatedRoute,
+  private authService:AuthService,
+   @Inject(PLATFORM_ID) private platformId: Object
 ){
   const navigation =  this.router.getCurrentNavigation();
   if(navigation?.extras.state){
@@ -33,58 +37,99 @@ constructor(
   }
 }
 ngOnInit(){
-   // If the state was not available (e.g., user refreshed the page),
-    // redirect them back to the home page.
-    if(!this.writerProfile){
-      this.router.navigate(['/client-home']);
+   // This block now handles the case where the user refreshes the page
+    // or navigates directly to the URL.
+    if (!this.writerProfile) {
+      const writerId = this.route.snapshot.paramMap.get('id');
+      if (writerId) {
+        const writerIdNumber = parseInt(writerId);
+        if (!isNaN(writerIdNumber)) { // Make sure the conversion was successful
+      this.fetchProfileById(writerIdNumber); // Call the function with the number
     }
-    const user=sessionStorage.getItem('user');
-     if(user){
-      this.userDetails=JSON.parse(user);
+      } else {
+        // If there's no ID in the URL and no state, we can't proceed.
+        this.router.navigate(['/client-home']);
+      }
     }
-       // TODO: In the future,I will add a method here to fetch existing
-    // messages for this chat from the backend.
-    // e.g., this.fetchMessages(this.writerProfile.id);
+     if (isPlatformBrowser(this.platformId)) {
+ // Load client details
+    const user = sessionStorage.getItem('user');
+    if (user) {
+      this.userDetails = JSON.parse(user);
+    }}
 }
-sendMessage():void {
-if (!this.chatInput.trim()) return;
-this.isSending = true;
-const payload:SendMessagePayload={
-   receiver_id: this.writerProfile.id,
-      message: this.chatInput.trim()
-}
-// Clear the input immediately for a better UX
-    this.chatInput = '';
-    // 2. Call the service
-    this.chatService.sendMessage(payload).subscribe({
+fetchProfileById(id:number){
+  this.isLoading = true;
+    this.authService.getCurrentProfile(id).subscribe({
       next:(response)=>{
- // 3. On success, add the message returned from the server to the array
-        // The response should be the newly created message object
-        this.messages.push(response.data); 
-            // Also update the user's credit balance on the frontend
-        this.userDetails.credits_balance = response.new_credit_balance;
-        sessionStorage.setItem('user', JSON.stringify(this.userDetails));
-        this.isSending = false;
-         setTimeout(() => this.scrollToBottom(), 100);
+        this.writerProfile=response;
+        this.isLoading = false;
       },
       error:(err)=>{
-         // 4. On failure, show an error and re-enable the button
+        this.isLoading = false;
+         this.messageService.add({
+              severity: 'error',
+      summary: 'Error',
+      detail:  err.error?.email ||  err.error?.message,
+      life: 3000,
+        });
+        // Redirect back home if the profile can't be found
+        setTimeout(() => this.router.navigate(['/client-home']), 3000);
+      }
+    })
+  }
+
+  /**
+   * Sends the user's message to the backend via the ChatService.
+   */
+  sendMessage(): void {
+    // Guard clauses: Ensure we have a profile and a message to send
+    if (!this.writerProfile) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Writer profile not loaded.' });
+      return;
+    }
+    if (!this.chatInput.trim() || this.isSending) {
+      return;
+    }
+this.isSending = true;
+ // 1. Create the payload object based on the API requirements
+    const payload: SendMessagePayload = {
+      profile_id: this.writerProfile.id,
+      content: this.chatInput.trim(),
+      attachments:[]
+      // We are ignoring attachments for now
+    };
+
+    //  Clear the input immediately for a responsive feel
+    this.chatInput = '';
+    this.chatService.sendMessage(payload).subscribe({
+      next: (response) => {
+        //  On SUCCESS, push the new message from the server's response to our array
+        this.messages.push(response.data);
+
+        //  backend should return the new credit balance.
+        // If it does, I can update the UI like this:
+        // if (response.new_credit_balance !== undefined) {
+        //   this.userDetails.credits_balance = response.new_credit_balance;
+        // }
+
+        this.isSending = false;
+        setTimeout(() => this.scrollToBottom(), 100);
+      },
+      error: (err) => {
+        // On FAILURE, show an error and restore the user's typed message
         this.isSending = false;
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: err.error?.message || 'Failed to send message.',
+          summary: 'Send Failed',
+          detail: err.error?.error || 'Your message could not be sent.',
           life: 3000,
         });
- setTimeout(() => this.scrollToBottom(), 100);
-  // Optional:  put the failed message back in the input box
-        this.chatInput = payload.message; 
-}
-  })
-
-}
-
-
+        // Put the failed message back in the input box so the user can retry
+        this.chatInput = payload.content;
+      }
+    });
+  }
 scrollToBottom() {
 const container = document.getElementById('messageArea');
 if (container) container.scrollTop = container.scrollHeight;

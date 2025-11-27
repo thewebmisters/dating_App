@@ -9,7 +9,7 @@
       <img src="https://placehold.co/40x40/2A4A7C/FFFFFF?text=C" class="rounded-circle" />
       <h1 class="fs-5 fw-bold ms-3 d-none d-sm-block">RealSpark</h1>
     </div>
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center" *ngIf="userDetails">
       <div class="text-end me-3">
         <p class="fw-semibold mb-0">{{ userDetails.name }}</p>
         <p class="text-primary fw-bold small mb-0">
@@ -37,7 +37,10 @@
     style="max-width: 700px"
   >
     <!-- Chat Header -->
-    <div class="d-flex justify-content-between align-items-center p-3 border-bottom bg-white">
+    <div
+      class="d-flex justify-content-between align-items-center p-3 border-bottom bg-white"
+      *ngIf="writerProfile"
+    >
       <div class="d-flex align-items-center">
         <i class="pi pi-arrow-left text-primary fs-4" (click)="navigateToClientHome()"></i>
         <img
@@ -56,15 +59,21 @@
     </div>
 
     <!-- Messages -->
-    <div id="messageArea" class="flex-grow-1 p-3 overflow-auto bg-light">
+    <div
+      id="messageArea"
+      class="flex-grow-1 p-3 overflow-auto bg-light"
+      *ngIf="writerProfile && userDetails"
+    >
       <p class="text-center text-muted small">Today</p>
 
       <ng-container *ngFor="let msg of messages">
         <!-- Incoming messages from the writer -->
-        <!-- The sender_id is the writer's ID -->
+        <!-- The sender_type is 'profile' or 'writer' (check your API) -->
         <div class="d-flex mb-3" *ngIf="msg.sender_id === writerProfile.id">
           <div class="bg-secondary p-3 rounded shadow-sm" style="max-width: 60%">
-            <p class="mb-1">{{ msg.message }}</p>
+            <!-- Use msg.content -->
+            <p class="mb-1">{{ msg.content }}</p>
+            <!-- Use msg.created_at and the date pipe -->
             <span class="text-muted small">{{ msg.created_at | date : 'shortTime' }}</span>
           </div>
         </div>
@@ -73,7 +82,9 @@
         <!-- The sender_id is the logged-in client's ID  -->
         <div class="d-flex justify-content-end mb-3" *ngIf="msg.sender_id === userDetails.id">
           <div class="text-white p-3 rounded bg-primary shadow-sm" style="max-width: 60%">
-            <p class="mb-1">{{ msg.message }}</p>
+            <!-- Use msg.content -->
+            <p class="mb-1">{{ msg.content }}</p>
+            <!-- Use msg.created_at and the date pipe -->
             <span class="small opacity-75">{{ msg.created_at | date : 'shortTime' }}</span>
           </div>
         </div>
