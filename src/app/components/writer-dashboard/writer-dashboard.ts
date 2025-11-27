@@ -42,7 +42,7 @@ fetchUnclaimedChats(){
   this.chatService.getUnclaimedChats().subscribe({
     next:(response)=>{
 this.unclaimedChats =response;
-//console.log('unclaimed chats',this.unclaimedChats);
+console.log('unclaimed chats',this.unclaimedChats);
     },
     error:(err)=>{
         this.messageService.add({
