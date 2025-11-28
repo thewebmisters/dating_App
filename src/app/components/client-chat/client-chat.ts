@@ -8,6 +8,7 @@ import { Chat } from '../../services/chat';
 import { MessageService } from 'primeng/api';
 import {  ToastModule } from "primeng/toast";
 import { AuthService } from '../../services/auth-service';
+import { DataService } from '../../services/data-service';
 
 @Component({
   selector: 'app-client-chat',
@@ -22,6 +23,7 @@ isSending = false; // To disable the button while sending
 userDetails:any;
 chatInput: string = '';
 isLoading = true; 
+writerId!:number;
    // Access the navigation state in the constructor.
 constructor(
   private router:Router,
@@ -29,6 +31,7 @@ constructor(
   private messageService:MessageService,
   private route: ActivatedRoute,
   private authService:AuthService,
+  private dataService:DataService,
    @Inject(PLATFORM_ID) private platformId: Object
 ){
   const navigation =  this.router.getCurrentNavigation();
@@ -39,18 +42,21 @@ constructor(
 ngOnInit(){
    // This block now handles the case where the user refreshes the page
     // or navigates directly to the URL.
-    if (!this.writerProfile) {
-      const writerId = this.route.snapshot.paramMap.get('id');
-      if (writerId) {
-        const writerIdNumber = parseInt(writerId);
-        if (!isNaN(writerIdNumber)) { // Make sure the conversion was successful
-      this.fetchProfileById(writerIdNumber); // Call the function with the number
-    }
-      } else {
-        // If there's no ID in the URL and no state, we can't proceed.
-        this.router.navigate(['/client-home']);
-      }
-    }
+    this.writerId=this.dataService.getId();
+    console.log('writer id',this.writerId);
+    this.fetchProfileById(this.writerId);
+    // if (!this.writerProfile) {
+    //   const writerId = this.route.snapshot.paramMap.get('id');
+    //   if (writerId) {
+    //     const writerIdNumber = parseInt(writerId);
+    //     if (!isNaN(writerIdNumber)) { 
+    //   this.fetchProfileById(writerIdNumber); 
+    // }
+    //   } else {
+        
+    //     this.router.navigate(['/client-home']);
+    //   }
+    // }
      if (isPlatformBrowser(this.platformId)) {
  // Load client details
     const user = sessionStorage.getItem('user');

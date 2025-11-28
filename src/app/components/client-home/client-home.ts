@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { Button } from "primeng/button";
 import { DialogModule } from 'primeng/dialog';
 import { isPlatformBrowser } from '@angular/common';
+import { DataService } from '../../services/data-service';
 @Component({
   selector: 'app-client-home',
   templateUrl: './client-home.html',
@@ -28,6 +29,7 @@ export class ClientHome{
   constructor(private authService:AuthService,
     private messageService:MessageService,
     private router:Router,
+    private dataService:DataService,
     @Inject(PLATFORM_ID) private platformId: Object
   ){}
   ngOnInit(){
@@ -84,7 +86,8 @@ closeProfileDialog() {
     if(Number(this.userDetails.wallet.balance)<=0){
 this.router.navigate(['/buy-credit']);
     }else{
-      this.router.navigate(['/client-chat',profile.id]);
+      this.router.navigate(['/client-chat']);
+      this.dataService.setId(profile.id);
       sessionStorage.setItem('user',JSON.stringify(this.userDetails));
     }
     
