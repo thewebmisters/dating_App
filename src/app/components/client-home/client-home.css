@@ -23,3 +23,211 @@
 .grayscale {
   filter: grayscale(100%);
 }
+:host ::ng-deep .profile-dialog .p-dialog-content {
+  padding: 0;
+  border-radius: 20px; 
+  overflow: hidden;
+}
+
+.profile-view {
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+/* --- Image and Action Buttons --- */
+.profile-image-container {
+  position: relative;
+  text-align: center;
+}
+.action-buttons {
+  position: absolute;
+  bottom: -30px; 
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.action-btn {
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.action-btn:hover {
+    transform: scale(1.1);
+}
+.action-btn i {
+  font-size: 24px;
+}
+.btn-reject { background-color: white; color: #fd7272; }
+.btn-like { background-color: #ff4757; font-size: 32px; width: 70px; height: 70px; }
+.btn-superlike { background-color: white; color: #8e44ad; }
+.profile-name {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.profile-profession {
+  font-size: 14px;
+  color: #888;
+  margin: 0;
+}
+
+.send-message-btn {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: #ff4757;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.info-section {
+  margin-top: 20px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.section-content {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.distance-tag {
+    background-color: #ffebee;
+    color: #ff4757;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+.read-more, .see-all {
+  color: #ff4757;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 14px;
+}
+.read-more-button {
+  background: none;
+  border: none;
+  color: #ff4757; 
+  font-weight: bold;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.read-more-button:hover {
+  text-decoration: underline;
+}
+
+/* --- Interests & Gallery --- */
+.interests-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.interest-tag {
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+/* By default (on mobile), make the dialog take up the full screen */
+:host ::ng-deep .profile-dialog {
+  width: 100%;
+  height: 100%;
+  max-height: 100vh; /* Ensure it doesn't exceed viewport height */
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* On larger screens (tablets and desktops), turn it back into a centered card */
+@media (min-width: 576px) {
+  :host ::ng-deep .profile-dialog {
+    width: 400px; 
+    max-height: 90vh;
+    border-radius: 20px; 
+  }
+}
+/* --- 2. INTERNAL SCROLLING --- */
+/* Make the main view container scrollable if its content overflows */
+.profile-view {
+  height: 100%; /* Make it fill the dialog's content area */
+  overflow-y: auto; /* IMPORTANT: Show a vertical scrollbar ONLY if needed */
+  background-color: white;
+}
+/* The info section should just grow naturally. The scroll is on the parent. */
+.profile-info {
+  padding: 45px 25px 25px 25px;
+  background-color: white;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+/* --- 3. CLOSE BUTTON STYLING --- */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 10; /* Ensure it sits on top of the image */
+/* Visuals */
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.close-btn:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.close-btn .pi {
+  font-size: 16px;
+}
+.main-profile-img {
+  width: 100%;
+  height: 50vh; 
+  max-height: 450px; 
+  object-fit: cover;
+}

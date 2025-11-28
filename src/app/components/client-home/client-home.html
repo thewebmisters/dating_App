@@ -36,7 +36,7 @@
       <div class="col-6 col-sm-4 col-md-3 col-lg-2" *ngFor="let profile of writerProfiles">
         <p-card
           class="shadow-sm border-0 rounded overflow-hidden profile-card"
-          (click)="checkCreditBal(profile)"
+          (click)="openProfileCard(profile)"
         >
           <!-- Profile Image -->
           <div class="position-relative">
@@ -59,12 +59,12 @@
             >
               <h6 class="fw-bold mb-1">{{ profile.name }}, {{ profile.age }}</h6>
 
-              <span
-                class="badge px-2 py-1"
-                [ngClass]="profile.is_online ? 'bg-success' : 'bg-secondary'"
-              >
-                {{ profile.is_online }}
-              </span>
+              <ng-container *ngIf="profile.is_online == true">
+                <span class="badge px-2 py-1" [ngClass]="'bg-success'"> online </span>
+              </ng-container>
+              <ng-container *ngIf="profile.is_online == false">
+                <span class="badge px-2 py-1" [ngClass]="'bg-secondary'"> offline </span>
+              </ng-container>
             </div>
 
             <!-- Hover Overlay -->
@@ -79,4 +79,90 @@
       </div>
     </div>
   </main>
+  <!-- p-dialog for profile selection -->
+  <!-- p-dialog for profile selection -->
+  <p-dialog
+    [(visible)]="visible"
+    [modal]="true"
+    [dismissableMask]="true"
+    [showHeader]="false"
+    styleClass="profile-dialog"
+    (onHide)="closeProfileDialog()"
+  >
+    <div *ngIf="selectedProfile" class="profile-view">
+      <div class="profile-image-container">
+        <button (click)="closeProfileDialog()" class="close-btn">
+          <i class="pi pi-times"></i>
+        </button>
+        <img [src]="selectedProfile.profile_photo" alt="Profile photo" class="main-profile-img" />
+        <div class="action-buttons">
+          <button class="action-btn btn-like"><i class="pi pi-heart-fill"></i></button>
+        </div>
+      </div>
+      <!-- 2. Profile Information Section -->
+      <div class="profile-info">
+        <!-- Name, Age & Send Message Icon -->
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="profile-name">{{ selectedProfile.name }}, {{ selectedProfile.age }}</h2>
+            <p class="profile-profession">Professional model</p>
+          </div>
+          <button class="send-message-btn" (click)="checkCreditBal(selectedProfile)">
+            <i class="pi pi-send"></i>
+          </button>
+        </div>
+        <!-- Location -->
+        <div class="info-section">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="section-title">Location</h5>
+          </div>
+          <p class="section-content">{{ selectedProfile.city }}, {{ selectedProfile.country }}</p>
+        </div>
+        <!-- About -->
+        <div class="info-section">
+          <h5 class="section-title">About</h5>
+          <p
+            *ngIf="isBioTruncated && selectedProfile.bio.length > bioMaxLength"
+            class="section-content"
+          >
+            {{ selectedProfile.bio | slice : 0 : bioMaxLength }}...
+            <button (click)="toggleBio()" class="read-more-button">Read more</button>
+          </p>
+          <p
+            *ngIf="!isBioTruncated && selectedProfile.bio.length > bioMaxLength"
+            class="section-content"
+          >
+            {{ selectedProfile.bio }}
+            <button (click)="toggleBio()" class="read-more-button">Read less</button>
+          </p>
+          <p *ngIf="selectedProfile.bio.length <= bioMaxLength" class="section-content">
+            {{ selectedProfile.bio }}
+          </p>
+        </div>
+        <!-- Interests -->
+        <div class="info-section">
+          <h5 class="section-title">Interests</h5>
+          <div class="interests-container">
+            <span *ngFor="let interest of selectedProfile.interests" class="interest-tag">{{
+              interest
+            }}</span>
+          </div>
+        </div>
+        <!-- Gallery -->
+        <div
+          class="info-section"
+          *ngIf="selectedProfile.gallery && selectedProfile.gallery.length > 0"
+        >
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="section-title">Gallery</h5>
+          </div>
+          <div class="gallery-grid">
+            <div *ngFor="let photo of selectedProfile.gallery" class="gallery-item">
+              <img [src]="photo.image_path" alt="Gallery image" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </p-dialog>
 </div>

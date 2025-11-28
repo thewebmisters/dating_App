@@ -130,7 +130,7 @@ if(response && response.token){
           if( this.userDetails.role==='user' ){
           this.router.navigate(['client-home']);
 } else if(this.userDetails.role==='writer'){
-         this.router.navigate(['chat-screen']);
+         this.router.navigate(['writer-dashboard']);
           }else{
            this.router.navigate(['client-home']);
           }
