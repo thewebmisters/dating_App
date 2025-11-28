@@ -1,38 +1,41 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { AuthenticatedUserDTO, WriterProfileDTO } from '../data/auth-dto';
+import { AuthenticatedUserDTO, Writer, WriterProfileDTO } from '../data/auth-dto';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../environments/environment.development';
-import { response } from 'express';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private platformId = inject(PLATFORM_ID);
+  private baseUrl = environment.baseUrl;
   constructor(private http: HttpClient) {
     // This constructor check is good for robustness
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('access_token');
     }
   }
-register(body: any): Observable<any> {
+  register(body: any): Observable<any> {
     const fullUrl = `${environment.baseUrl}/auth/register`;
-    return this.http.post<any>(fullUrl, body).pipe(tap(response=>{
-      if(isPlatformBrowser(this.platformId)){
-        if(response && response.token){
-          localStorage.setItem('access_token', response.token);
+    return this.http.post<any>(fullUrl, body).pipe(
+      tap((response) => {
+        if (isPlatformBrowser(this.platformId)) {
+          if (response && response.token) {
+            localStorage.setItem('access_token', response.token);
+          }
         }
-      }
-    }))
+      })
+    );
   }
 
   login(body: any): Observable<any> {
     const fullUrl = `${environment.baseUrl}/auth/login`;
     return this.http.post<any>(fullUrl, body).pipe(
-      tap(response => {
-        if (isPlatformBrowser(this.platformId)) { // Also guard the write operation
+      tap((response) => {
+        if (isPlatformBrowser(this.platformId)) {
+          // Also guard the write operation
           if (response && response.token) {
             localStorage.setItem('access_token', response.token);
           }
@@ -59,11 +62,14 @@ register(body: any): Observable<any> {
     const fullUrl = `${environment.baseUrl}/profiles`;
     return this.http.get<WriterProfileDTO>(fullUrl);
   }
+  getCurrentProfile(id: number): Observable<Writer> {
+    const fullUrl = `${environment.baseUrl}/profiles/${id}`;
+    return this.http.get<Writer>(fullUrl);
+  }
 
   logout() {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('access_token');
     }
   }
-
 }

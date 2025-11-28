@@ -96,3 +96,35 @@ export interface AuthenticatedUserDTO {
     updated_at: string | Date;
   };
 }
+export interface SendMessagePayload {
+  profile_id: number;
+  content: string;
+  attachments?: any[]; 
+}
+
+// Interface for the successful API response
+export interface SendMessageResponse {
+  message: string;
+  data: any; 
+}
+export interface UnclaimedChatsResponse{
+  "message": "Available chats retrieved successfully",
+  "data": UnclaimedChats[]
+}
+export interface UnclaimedChats{
+    id: number;
+      user_id: number;
+      profile_id: number;
+      status: string;
+      created_at: string | Date;
+      user: {
+      name: string;
+     },
+      profile: {
+        name: string;
+      },
+      last_message: {
+        content: string;
+        created_at: string | Date;
+      }
+}
