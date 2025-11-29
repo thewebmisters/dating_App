@@ -43,7 +43,10 @@ ngOnInit(){
    // This block now handles the case where the user refreshes the page
     // or navigates directly to the URL.
     this.writerId=this.dataService.getId();
-    console.log('writer id',this.writerId);
+    if(!this.writerId){
+      this.router.navigate(['/login']);
+      return;
+    }
     this.fetchProfileById(this.writerId);
     // if (!this.writerProfile) {
     //   const writerId = this.route.snapshot.paramMap.get('id');
@@ -72,15 +75,9 @@ fetchProfileById(id:number){
         this.isLoading = false;
       },
       error:(err)=>{
-        this.isLoading = false;
-         this.messageService.add({
-              severity: 'error',
-      summary: 'Error',
-      detail:  err.error?.email ||  err.error?.message,
-      life: 3000,
-        });
+       this.dataService.handleApiError(err);
         // Redirect back home if the profile can't be found
-        setTimeout(() => this.router.navigate(['/client-home']), 3000);
+        setTimeout(() => this.router.navigate(['dashboard']), 3000);
       }
     })
   }
@@ -123,14 +120,7 @@ this.isSending = true;
         setTimeout(() => this.scrollToBottom(), 100);
       },
       error: (err) => {
-        // On FAILURE, show an error and restore the user's typed message
-        this.isSending = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Send Failed',
-          detail: err.error?.error || 'Your message could not be sent.',
-          life: 3000,
-        });
+       this.dataService.handleApiError(err);
         // Put the failed message back in the input box so the user can retry
         this.chatInput = payload.content;
       }

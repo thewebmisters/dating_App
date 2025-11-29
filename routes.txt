@@ -1,0 +1,4 @@
+/login
+/writer-dashboard
+/client-home
+/signup

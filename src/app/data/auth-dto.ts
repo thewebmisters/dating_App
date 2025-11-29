@@ -108,8 +108,8 @@ export interface SendMessageResponse {
   data: any; 
 }
 export interface UnclaimedChatsResponse{
-  "message": "Available chats retrieved successfully",
-  "data": UnclaimedChats[]
+  message: string;
+  data: UnclaimedChats[]
 }
 export interface UnclaimedChats{
     id: number;

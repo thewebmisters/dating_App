@@ -14,6 +14,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
+import { DataService } from '../../services/data-service';
 
 @Component({
   selector: 'app-signup',
@@ -37,6 +38,7 @@ export class Signup {
     private messageService: MessageService,
     private router: Router,
     private authService: AuthService,
+    private dataService:DataService
    
   ) {}
   ngOnInit() {
@@ -137,12 +139,7 @@ if(response && response.token){
            
 },
       error: (err) => {
-          this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: err.error?.message,
-      life: 3000,
-    });
+          this.dataService.handleApiError(err);
     this.isLoading=false;
       },
     });
