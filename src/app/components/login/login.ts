@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
+import { DataService } from '../../services/data-service';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,8 @@ export class Login {
 private fb:FormBuilder,
 private router:Router,
 private messageService:MessageService,
-private authService:AuthService
+private authService:AuthService,
+private dataService:DataService
   ){}
 ngOnInit(){
   this.initializeLoginForm();
@@ -80,12 +82,7 @@ showError() {
        },
         error:(err)=>{
           this.isLoading=false;
-           this.messageService.add({
-              severity: 'error',
-      summary: 'Error',
-      detail:  err.error?.errors?.email || err.error?.message,
-      life: 3000,
-        })
+          this.dataService.handleApiError(err);
          this.isLoading=false;
         }
       })

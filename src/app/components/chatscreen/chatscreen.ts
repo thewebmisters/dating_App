@@ -7,6 +7,7 @@ import { ToastModule } from "primeng/toast";
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { DataService } from '../../services/data-service';
 
 @Component({
   selector: 'app-chatscreen',
@@ -19,6 +20,7 @@ export class Chatscreen {
   password:string | null=null;
   user!:AuthenticatedUserDTO;
   name:string | null=null;
+  chatId!:number;
     // Chat logic
   replyText = '';
   minChars = 100;
@@ -85,9 +87,16 @@ export class Chatscreen {
 constructor(
   private authService:AuthService,
   private messageService:MessageService,
-  private router:Router
+  private router:Router,
+  private dataService:DataService
 ){}
 ngOnInit(){
+   this.chatId=this.dataService.getChatId();
+  console.log('chat id',this.chatId);
+  // if(!this.chatId){
+  //   this.router.navigate(['writer-dashboard']);
+  //   return
+  // }
   const email = sessionStorage.getItem('email');
   if(email){
     this.email=email;
@@ -96,6 +105,7 @@ ngOnInit(){
   if(password){
     this.password=password;
   }
+ 
   this.fetchUserDetails();
 }
 fetchUserDetails(){
