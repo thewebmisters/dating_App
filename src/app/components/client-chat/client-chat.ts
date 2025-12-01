@@ -9,6 +9,7 @@ import { MessageService } from 'primeng/api';
 import {  ToastModule } from "primeng/toast";
 import { AuthService } from '../../services/auth-service';
 import { DataService } from '../../services/data-service';
+import { WebSocketService } from '../web-socket-service';
 
 @Component({
   selector: 'app-client-chat',
@@ -24,6 +25,7 @@ userDetails:any;
 chatInput: string = '';
 isLoading = true; 
 writerId!:number;
+private channelName = '';
    // Access the navigation state in the constructor.
 constructor(
   private router:Router,
@@ -32,6 +34,7 @@ constructor(
   private route: ActivatedRoute,
   private authService:AuthService,
   private dataService:DataService,
+  private webSocketService:WebSocketService,
    @Inject(PLATFORM_ID) private platformId: Object
 ){
   const navigation =  this.router.getCurrentNavigation();
@@ -48,6 +51,12 @@ ngOnInit(){
       return;
     }
     this.fetchProfileById(this.writerId);
+      this.channelName = `chat.${this.writerId}`;
+      //  Listen for new messages on this specific chat's channel
+       this.webSocketService.listen(this.channelName, 'NewMessageEvent', (newMessage: any) => {
+          this.messages.push(newMessage.message); 
+          this.scrollToBottom();
+       })
     // if (!this.writerProfile) {
     //   const writerId = this.route.snapshot.paramMap.get('id');
     //   if (writerId) {
@@ -67,6 +76,13 @@ ngOnInit(){
       this.userDetails = JSON.parse(user);
     }}
 }
+ ngOnDestroy() {
+    // Clean up the connection when the component is destroyed
+    // to prevent memory leaks and duplicate listeners.
+    if (this.channelName) {
+      this.webSocketService.leaveChannel(this.channelName);
+    }
+  }
 fetchProfileById(id:number){
   this.isLoading = true;
     this.authService.getCurrentProfile(id).subscribe({

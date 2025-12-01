@@ -14,10 +14,10 @@ this.writerId=id;
   getId(){
     return this.writerId;
   }
-  setChatId(chatId:number){
+  setChatId(chatId:number):void{
    this.chatId=chatId; 
   }
-  getChatId(){
+  getChatId():number{
     return this.chatId;
   }
 
@@ -26,7 +26,7 @@ handleApiError(err:any){
  this.messageService.add({
       severity: 'error',
       summary: 'Error',
-      detail: err.error?.message,
+      detail: err.error?.message || 'Failed to load resource',
       life: 3000,
     });
   }

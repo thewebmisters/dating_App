@@ -57,6 +57,7 @@ export class ClientHome{
  openProfileCard(profile: Writer) {
   this.visible=true;
   this.selectedProfile = profile;
+  console.log('profile id',this.selectedProfile.id);
     this.isBioTruncated = true; 
 }
 closeProfileDialog() {

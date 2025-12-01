@@ -14,7 +14,7 @@ export const routes: Routes = [
     {path:'landing-page',component:LandingPage},
     {path:'signup',component:Signup},
     {path:'login',component:Login},
-    {path:'chat-screen/:chatId',component:Chatscreen},
+    {path:'chat-screen',component:Chatscreen},
     {path:'forgot-password',component:ForgotPassword},
     {path:'admin-panel',component:AdminPanel},
     {path:'client-home',component:ClientHome},

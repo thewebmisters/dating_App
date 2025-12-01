@@ -3,25 +3,27 @@ import { AuthenticatedUserDTO, UnclaimedChats, UnclaimedChatsResponse } from './
 import { Component } from '@angular/core';
 import { Chat } from '../../services/chat';
 import { MessageService } from 'primeng/api';
-import { ChatSummary, PaginatedChatsResponse } from '../../data/chats-dto';
+import { ChatSummary, ClaimedChat, PaginatedChatsResponse } from '../../data/chats-dto';
 import { DataService } from '../../services/data-service';
 import { AuthService } from '../../services/auth-service';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Dialog } from "primeng/dialog";
 import { Router } from '@angular/router';
+import { Toast } from "primeng/toast";
 
 @Component({
   selector: 'app-writer-dashboard',
-  imports: [CommonModule, NgIf, Dialog,NgFor],
+  imports: [CommonModule, NgIf, Dialog, NgFor, Toast],
   templateUrl: './writer-dashboard.html',
   styleUrl: './writer-dashboard.css',
 })
 export class WriterDashboard {
   imgSrc: string = '/assets/images/mainlogo.jpg';
- writerChats: ChatSummary[] = []; 
+ writerChats: ClaimedChat[] = []; 
   unclaimedChats: any[] = [];
   authUserDetails!:AuthenticatedUserDTO;
   showUnclaimedDialog = false; 
+  activeChatId: number | null = null;
 constructor(
   private chatService:Chat,
   private messageService:MessageService,
@@ -30,9 +32,10 @@ constructor(
   private router:Router
 ){}
 ngOnInit(){
-  this.fetchWriterChats();
+  //this.fetchWriterChats();
   this.fetchUnclaimedChats();
   this.fetchAuthUserDetails();
+  this.fetchWriterClaimedChats();
 }
 fetchAuthUserDetails():void{
 this.authService.getUserDetails().subscribe({
@@ -44,22 +47,34 @@ this.authService.getUserDetails().subscribe({
   }
 })
 }
-fetchWriterChats():void{
-  this.chatService.getWriterChats().subscribe({
-    next:(response)=>{
-      this.writerChats=response;
-      // console.log('response',this.writerChats.data);
-    },
-    error:(err)=>{
-  this.dataService.handleApiError(err);
-    }
-  })
-}
+// fetchWriterChats():void{
+//   this.chatService.getWriterChats().subscribe({
+//     next:(response)=>{
+//       this.writerChats=response;
+//        console.log('writer chats response',response);
+//     },
+//     error:(err)=>{
+//   this.dataService.handleApiError(err);
+//     }
+//   })
+// }
+
+  fetchWriterClaimedChats(): void {
+    this.chatService.getClaimedChats().subscribe({
+      next: (response) => {
+        this.writerChats = response;
+        console.log('Claimed chats response:', response);
+      },
+      error: (err) => {
+        this.dataService.handleApiError(err);
+      }
+    });
+  }
 fetchUnclaimedChats(){
   this.chatService.getUnclaimedChats().subscribe({
     next:(response)=>{
 this.unclaimedChats =response;
-//console.log('unclaimed chats',this.unclaimedChats.data);
+//console.log('unclaimed chats',this.unclaimedChats);
     },
     error:(err)=>{
       this.dataService.handleApiError(err);
@@ -70,11 +85,14 @@ this.unclaimedChats =response;
    * Navigates the writer to the specific chat screen.
    * @param chat The chat object that was clicked.
    */
-  openChat(chat: ChatSummary): void {
+  openChat(chat: ClaimedChat): void {
     // Pass the CHAT ID to the chat screen route
     //this.router.navigate(['/writer/chat', chat.id]);
      this.dataService.setChatId(chat.id);
-    this.router.navigate(['/chat-screen',chat.id]);
+     const chatsid=this.dataService.getChatId();
+     this.activeChatId = chat.id
+    console.log('claimed Chat Id',chatsid)
+    this.router.navigate(['chat-screen']);
   }
   /**
    * Claims a chat and then refreshes the data.
@@ -85,12 +103,14 @@ this.unclaimedChats =response;
       next: (claimedChat) => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Chat claimed!' });
           // Refresh both lists to show the updated state
-        this.fetchWriterChats();
+        this.fetchWriterClaimedChats();
         this.fetchUnclaimedChats();
         this.showUnclaimedDialog = false;
-        this.dataService.setChatId(claimedChat.id);
+        this.dataService.setChatId(chatId);
+        const chatsid=this.dataService.getChatId();
+        console.log('claimed Chat Id',chatsid)
          // OPTIONAL: Immediately navigate to the chat you just claimed
-        this.router.navigate(['/chat-screen',chatId]);
+        this.router.navigate(['chat-screen']);
       },
       error: (err) => {
         this.dataService.handleApiError(err);
