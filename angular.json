@@ -99,24 +99,8 @@
               "src/styles.css"
             ]
           }
-        },
-        
-        "prerender": {
-          "builder": "@angular-devkit/build-angular:prerender",
-          "options": {
-            "routesFile": "routes.txt"
-          },
-          "configurations": {
-            "production": {
-           
-            },
-            "development": {
-        
-            }
-          },
-          "defaultConfiguration": "production"
         }
-      }
+        }
     }
   }
 }
