@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';//pusher class from library
 import { environment } from '../../environments/environment';
@@ -14,35 +14,42 @@ export class WebSocketService {
    * @memberof WebSocketService
    */
   echo!: Echo<any> | undefined;
-  constructor(private authService: AuthService) {}
+  // Private property to hold the lazily-loaded AuthService
+  private authService!: AuthService;
+  constructor(private injector: Injector) {}
   /**
    * Initializes the Laravel Echo instance.
    * This should be called once the user is logged in.
    */
-  connect(): void {
-    // if connection to websocket already exists,prevent multiple connections
+   /**
+   * Initializes the Laravel Echo instance.
+   */
+  
+    connect(): void {
     if (this.echo) {
       return;
     }
-    // Make Pusher globally available for Echo
+   // Lazily get the AuthService instance ONLY when connect() is called.
+    if (!this.authService) {
+      this.authService = this.injector.get(AuthService);
+    }
     (window as any).Pusher = Pusher;
-//establish a new connection
+
     this.echo = new Echo({
       broadcaster: 'pusher',
       key: environment.pusherAppKey,
       cluster: environment.pusherAppCluster,
       forceTLS: true,
-      //Laravel Echo checks if you're allowed to join private & 
-      // presence channels by calling this endpoint
       authEndpoint: `${environment.baseUrl}/broadcasting/auth`,
       auth: {
         headers: {
-          // Echo will automatically get the token from  AuthService
+          // This is now safe because AuthService will be fully constructed
           Authorization: `Bearer ${this.authService.getAccessToken()}`,
         },
       },
     });
   }
+
 
   /**
    * Listens for an event on a specific private channel.
