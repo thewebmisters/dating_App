@@ -1,4 +1,5 @@
 <div class="d-flex h-100 bg-light">
+  <p-toast></p-toast>
   <!-- MAIN CONTENT -->
   <div class="flex-grow-1 d-flex flex-column">
     <!-- HEADER -->
@@ -7,19 +8,19 @@
     >
       <div class="d-flex align-items-center">
         <img src="https://placehold.co/40x40/2A4A7C/FFFFFF?text=C" class="rounded-circle" />
-        <h2 class="h5 fw-bold text-dark ms-3 mb-0">Chathomebase</h2>
+        <h2 class="h5 fw-bold text-dark ms-3 mb-0">RealSpark</h2>
 
         <span class="ms-3 badge bg-secondary text-dark fw-semibold"> Writer Dashboard </span>
       </div>
 
-      <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center" *ngIf="writer">
         <div class="me-3 text-end">
           <p class="fw-semibold text-primary mb-1">{{ writer.name }}</p>
-          <p class="text-success fw-bold mb-0">Balance: ${{ writer.balance }}</p>
+          <p class="text-success fw-bold mb-0">Balance: ${{ writer.wallet.balance }}</p>
         </div>
 
         <p-avatar
-          [image]="writer.avatar"
+          [image]="writer.profile_photo"
           shape="circle"
           size="large"
           styleClass="border border-primary border-2"
@@ -32,7 +33,7 @@
       <!-- LEFT COLUMN – LOGBOOK -->
       <div class="bg-white border-end p-0" style="width: 25%">
         <div class="p-4 border-bottom">
-          <h4 class="fw-bold text-dark mb-1">{{ client.name }}'s Logbook</h4>
+          <h4 class="fw-bold text-dark mb-1">{{ client?.name }}'s Logbook</h4>
           <p class="text-muted small">Client since: Aug 15, 2025</p>
         </div>
 
@@ -49,8 +50,8 @@
 
         <div class="p-3 overflow-auto" style="height: calc(100% - 190px)">
           <div *ngFor="let entry of logEntries" class="mb-3">
-            <p class="fw-semibold text-dark">{{ entry.text }}</p>
-            <p class="small text-muted">{{ entry.date }}</p>
+            <p class="fw-semibold text-dark">{{ entry?.text }}</p>
+            <p class="small text-muted">{{ entry?.date }}</p>
           </div>
         </div>
 
@@ -64,22 +65,24 @@
       <!-- CENTER COLUMN – CHAT -->
       <div class="flex-grow-1 d-flex flex-column bg-light">
         <!-- Chat messages -->
-        <div class="flex-grow-1 p-4 overflow-auto">
+        <div class="flex-grow-1 p-4 overflow-auto" *ngIf="messages">
           <div class="d-flex flex-column gap-4">
             <!-- Message bubbles -->
             <div *ngFor="let msg of messages">
-              <!-- Client -->
-              <div *ngIf="msg.sender === 'client'" class="d-flex align-items-start gap-3">
-                <img [src]="msg.avatar" class="rounded-circle" width="40" height="40" />
+              <!-- Client messages (incoming)-->
+              <div *ngIf="msg.sender_type === 'user'" class="d-flex align-items-start gap-3">
+                <img [src]="client?.profile_photo" class="rounded-circle" width="40" height="40" />
                 <div class="p-3 bg-white rounded rounded-start-0 shadow-sm" style="max-width: 60%">
-                  <p class="mb-1 text-dark small">{{ msg.text }}</p>
-                  <p class="text-muted text-end small">{{ msg.time }}</p>
+                  <p class="mb-1 text-dark small">{{ msg?.content }}</p>
+                  <p class="text-muted text-end small">
+                    {{ msg?.created_at | date : 'shortTime' }}
+                  </p>
                 </div>
               </div>
 
-              <!-- Writer -->
+              <!-- Writer Messages (outgoing)-->
               <div
-                *ngIf="msg.sender === 'writer'"
+                *ngIf="msg.sender_type === 'profile'"
                 class="d-flex align-items-start gap-3 flex-row-reverse text-end"
               >
                 <img [src]="msg.avatar" class="rounded-circle" width="40" height="40" />
@@ -87,8 +90,8 @@
                   class="p-3 bg-primary text-white rounded rounded-end-0 shadow-sm"
                   style="max-width: 60%"
                 >
-                  <p class="mb-1 small">{{ msg.text }}</p>
-                  <p class="text-light small">{{ msg.time }}</p>
+                  <p class="mb-1 small">{{ msg?.content }}</p>
+                  <p class="text-light small">{{ msg?.created_at | date : 'shortTime' }}</p>
                 </div>
               </div>
             </div>
@@ -113,6 +116,7 @@
                 class="btn btn-primary px-4"
                 [class.disabled]="sendDisabled"
                 [disabled]="sendDisabled"
+                (click)="sendMessage()"
               >
                 Send
               </button>
@@ -125,20 +129,20 @@
       <div class="bg-white border-start p-4 overflow-auto" style="width: 25%">
         <div class="text-center mb-4">
           <img
-            [src]="client.avatar"
+            [src]="client?.avatar"
             class="rounded-circle border border-success border-4 p-1 mb-3"
             width="100"
             height="100"
           />
 
-          <h4 class="fw-bold text-dark">{{ client.name }}</h4>
+          <h4 class="fw-bold text-dark">{{ client?.name }}</h4>
           <span class="badge bg-success">
-            <i class="pi pi-circle-fill me-1 small"></i>{{ client.status }}
+            <i class="pi pi-circle-fill me-1 small"></i>{{ client?.status }}
           </span>
         </div>
 
         <h5 class="fw-semibold text-dark">Bio</h5>
-        <p class="text-muted small">{{ client.bio }}</p>
+        <p class="text-muted small">{{ client?.bio }}</p>
 
         <hr />
 
@@ -146,19 +150,19 @@
 
         <ul class="list-unstyled small text-muted">
           <li class="mb-2">
-            <i class="pi pi-calendar me-2 text-primary"></i> {{ client.details.age }} years old
+            <i class="pi pi-calendar me-2 text-primary"></i> {{ client?.details.age }} years old
           </li>
           <li class="mb-2">
-            <i class="pi pi-map-marker me-2 text-primary"></i>{{ client.details.location }}
+            <i class="pi pi-map-marker me-2 text-primary"></i>{{ client?.details.location }}
           </li>
           <li class="mb-2">
-            <i class="pi pi-briefcase me-2 text-primary"></i>{{ client.details.job }}
+            <i class="pi pi-briefcase me-2 text-primary"></i>{{ client?.details.job }}
           </li>
           <li class="mb-2">
-            <i class="pi pi-heart me-2 text-primary"></i>{{ client.details.marital }}
+            <i class="pi pi-heart me-2 text-primary"></i>{{ client?.details.marital }}
           </li>
           <li class="mb-2">
-            <i class="pi pi-ban me-2 text-primary"></i>{{ client.details.smoking }}
+            <i class="pi pi-ban me-2 text-primary"></i>{{ client?.details.smoking }}
           </li>
         </ul>
       </div>

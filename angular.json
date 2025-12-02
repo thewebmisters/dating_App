@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-             "prerender":true,
+           "prerender": true,
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -25,7 +25,6 @@
                 "glob": "**/*",
                 "input": "public"
               }
-                
             ],
             "styles": [
               "src/custom-theme.scss",
@@ -101,7 +100,7 @@
             ]
           }
         }
-      }
+        }
     }
   }
 }
