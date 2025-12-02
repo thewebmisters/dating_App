@@ -1,42 +1,46 @@
 import { Injectable } from '@angular/core';
 import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
+import Pusher from 'pusher-js';//pusher class from library
 import { environment } from '../../environments/environment';
 import { AuthService } from '../services/auth-service';
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WebSocketService {
-//echo: Echo | undefined;
-//echo!: Echo;  // Works because Echo is both value + constructor
-echo!: Echo<any> | undefined;
-
-  constructor(private authService: AuthService) { }
-
+  /**
+   *
+   *
+   * @type {(Echo<any> | undefined)} it holds Laravel Echo WebSocket instance.
+   * @memberof WebSocketService
+   */
+  echo!: Echo<any> | undefined;
+  constructor(private authService: AuthService) {}
   /**
    * Initializes the Laravel Echo instance.
    * This should be called once the user is logged in.
    */
   connect(): void {
-    // Prevent multiple connections
+    // if connection to websocket already exists,prevent multiple connections
     if (this.echo) {
       return;
     }
     // Make Pusher globally available for Echo
     (window as any).Pusher = Pusher;
-
+//establish a new connection
     this.echo = new Echo({
       broadcaster: 'pusher',
-      key: environment.pusherAppKey, 
-      cluster: environment.pusherAppCluster, 
+      key: environment.pusherAppKey,
+      cluster: environment.pusherAppCluster,
       forceTLS: true,
-      authEndpoint: `${environment.baseUrl}/broadcasting/auth`, 
+      //Laravel Echo checks if you're allowed to join private & 
+      // presence channels by calling this endpoint
+      authEndpoint: `${environment.baseUrl}/broadcasting/auth`,
       auth: {
         headers: {
           // Echo will automatically get the token from  AuthService
-          Authorization: `Bearer ${this.authService.getAccessToken()}` 
-        }
-      }
+          Authorization: `Bearer ${this.authService.getAccessToken()}`,
+        },
+      },
     });
   }
 
@@ -71,7 +75,7 @@ echo!: Echo<any> | undefined;
   disconnect(): void {
     if (this.echo) {
       this.echo.disconnect();
-      this.echo =undefined;
+      this.echo = undefined;
     }
   }
 }

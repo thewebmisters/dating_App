@@ -2,11 +2,11 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SendMessagePayload, Writer} from '../../data/auth-dto';
+import { SendMessagePayload, Writer } from '../../data/auth-dto';
 import { AvatarModule } from 'primeng/avatar';
 import { Chat } from '../../services/chat';
 import { MessageService } from 'primeng/api';
-import {  ToastModule } from "primeng/toast";
+import { ToastModule } from 'primeng/toast';
 import { AuthService } from '../../services/auth-service';
 import { DataService } from '../../services/data-service';
 import { WebSocketService } from '../web-socket-service';
@@ -15,87 +15,71 @@ import { WebSocketService } from '../web-socket-service';
   selector: 'app-client-chat',
   imports: [FormsModule, CommonModule, AvatarModule, ToastModule],
   templateUrl: './client-chat.html',
-  styleUrl: './client-chat.css'
+  styleUrl: './client-chat.css',
 })
 export class ClientChat {
-writerProfile: Writer | null = null;
-messages: any=[];
-isSending = false; // To disable the button while sending
-userDetails:any;
-chatInput: string = '';
-isLoading = true; 
-writerId!:number;
-private channelName = '';
-   // Access the navigation state in the constructor.
-constructor(
-  private router:Router,
-  private chatService:Chat,
-  private messageService:MessageService,
-  private route: ActivatedRoute,
-  private authService:AuthService,
-  private dataService:DataService,
-  private webSocketService:WebSocketService,
-   @Inject(PLATFORM_ID) private platformId: Object
-){
-  const navigation =  this.router.getCurrentNavigation();
-  if(navigation?.extras.state){
-    this.writerProfile = navigation.extras.state['writerProfile'];
+  writerProfile: Writer | null = null;
+  messages: any = [];
+  isSending = false; // To disable the button while sending
+  userDetails: any;
+  chatInput: string = '';
+  isLoading = true;
+  writerId!: number;
+  private channelName = '';
+  // Access the navigation state in the constructor.
+  constructor(
+    private router: Router,
+    private chatService: Chat,
+    private messageService: MessageService,
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    private dataService: DataService,
+    private webSocketService: WebSocketService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras.state) {
+      this.writerProfile = navigation.extras.state['writerProfile'];
+    }
   }
-}
-ngOnInit(){
-   // This block now handles the case where the user refreshes the page
-    // or navigates directly to the URL.
-    this.writerId=this.dataService.getId();
-    if(!this.writerId){
+  ngOnInit() {
+    this.writerId = this.dataService.getId();
+    if (!this.writerId) {
       this.router.navigate(['/login']);
       return;
     }
     this.fetchProfileById(this.writerId);
+    if (this.writerId) {
       this.channelName = `chat.${this.writerId}`;
-      //  Listen for new messages on this specific chat's channel
-       this.webSocketService.listen(this.channelName, 'NewMessageEvent', (newMessage: any) => {
-          this.messages.push(newMessage.message); 
-          this.scrollToBottom();
-       })
-    // if (!this.writerProfile) {
-    //   const writerId = this.route.snapshot.paramMap.get('id');
-    //   if (writerId) {
-    //     const writerIdNumber = parseInt(writerId);
-    //     if (!isNaN(writerIdNumber)) { 
-    //   this.fetchProfileById(writerIdNumber); 
-    // }
-    //   } else {
-        
-    //     this.router.navigate(['/client-home']);
-    //   }
-    // }
-     if (isPlatformBrowser(this.platformId)) {
- // Load client details
-    const user = sessionStorage.getItem('user');
-    if (user) {
-      this.userDetails = JSON.parse(user);
-    }}
-}
- ngOnDestroy() {
-    // Clean up the connection when the component is destroyed
-    // to prevent memory leaks and duplicate listeners.
+      this.webSocketService.listen(this.channelName, 'NewMessageEvent', (newMessage: any) => {
+        this.messages.push(newMessage.message);
+        this.scrollToBottom();
+      });
+    }
+    if (isPlatformBrowser(this.platformId)) {
+      const user = sessionStorage.getItem('user');
+      if (user) {
+        this.userDetails = JSON.parse(user);
+      }
+    }
+  }
+  ngOnDestroy() {
     if (this.channelName) {
       this.webSocketService.leaveChannel(this.channelName);
     }
   }
-fetchProfileById(id:number){
-  this.isLoading = true;
+  fetchProfileById(id: number) {
+    this.isLoading = true;
     this.authService.getCurrentProfile(id).subscribe({
-      next:(response)=>{
-        this.writerProfile=response;
+      next: (response) => {
+        this.writerProfile = response;
         this.isLoading = false;
       },
-      error:(err)=>{
-       this.dataService.handleApiError(err);
-        // Redirect back home if the profile can't be found
+      error: (err) => {
+        this.dataService.handleApiError(err);
         setTimeout(() => this.router.navigate(['dashboard']), 3000);
-      }
-    })
+      },
+    });
   }
 
   /**
@@ -104,21 +88,22 @@ fetchProfileById(id:number){
   sendMessage(): void {
     // Guard clauses: Ensure we have a profile and a message to send
     if (!this.writerProfile) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Writer profile not loaded.' });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Writer profile not loaded.',
+      });
       return;
     }
     if (!this.chatInput.trim() || this.isSending) {
       return;
     }
-this.isSending = true;
- // 1. Create the payload object based on the API requirements
+    this.isSending = true;
     const payload: SendMessagePayload = {
       profile_id: this.writerProfile.id,
       content: this.chatInput.trim(),
-      attachments:[]
-      // We are ignoring attachments for now
+      attachments: [],
     };
-
     //  Clear the input immediately for a responsive feel
     this.chatInput = '';
     this.chatService.sendMessage(payload).subscribe({
@@ -136,17 +121,17 @@ this.isSending = true;
         setTimeout(() => this.scrollToBottom(), 100);
       },
       error: (err) => {
-       this.dataService.handleApiError(err);
+        this.dataService.handleApiError(err);
         // Put the failed message back in the input box so the user can retry
         this.chatInput = payload.content;
-      }
+      },
     });
   }
-scrollToBottom() {
-const container = document.getElementById('messageArea');
-if (container) container.scrollTop = container.scrollHeight;
-}
-navigateToClientHome():void{
-  this.router.navigate(['/client-home']);
-}
+  scrollToBottom() {
+    const container = document.getElementById('messageArea');
+    if (container) container.scrollTop = container.scrollHeight;
+  }
+  navigateToClientHome(): void {
+    this.router.navigate(['/client-home']);
+  }
 }
