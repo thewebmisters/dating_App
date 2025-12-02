@@ -1,4 +1,5 @@
 <div class="container-fluid">
+  <p-toast></p-toast>
   <div class="d-flex vh-100 bg-light">
     <!-- MAIN CONTENT -->
     <div class="flex-grow-1 d-flex flex-column">
@@ -11,13 +12,13 @@
           <h2 class="h5 fw-bold text-dark ms-3 mb-0">RealSpark</h2>
           <span class="ms-3 badge bg-secondary-subtle text-dark fw-semibold">Writer Dashboard</span>
         </div>
-        <div class="d-flex align-items-center">
+        <div *ngIf="authUserDetails" class="d-flex align-items-center">
           <div class="me-3 text-end">
-            <p class="fw-semibold text-primary mb-1">Maria Garcia</p>
-            <p class="text-success fw-bold mb-0">Balance: $125.50</p>
+            <p class="fw-semibold text-primary mb-1">{{ authUserDetails.name }}</p>
+            <p class="text-success fw-bold mb-0">Balance: {{ authUserDetails.wallet.balance }}</p>
           </div>
           <img
-            src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=100&q=80"
+            [src]="authUserDetails.profile_photo"
             class="rounded-circle border border-primary border-2"
             width="48"
             height="48"
@@ -33,70 +34,38 @@
             <h4 class="fw-bold">My Conversations</h4>
             <input type="text" class="form-control" placeholder="Search chats..." />
           </div>
+          <!-- *ngIf to show a message if there are no claimed chats -->
+          <div *ngIf="writerChats && writerChats.length === 0" class="text-center p-4 text-muted">
+            You have no active conversations.
+          </div>
           <div class="flex-grow-1 overflow-auto">
             <!-- Chat List Item: Active & Unread -->
-            <div class="d-flex align-items-center p-3 border-bottom chat-list-item active">
+            <div
+              class="d-flex align-items-center p-3 border-bottom chat-list-item active"
+              *ngFor="let chat of writerChats"
+              (click)="openChat(chat)"
+              [class.active]="chat.id === activeChatId"
+            >
               <div class="position-relative avatar-container me-3">
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80"
-                  class="rounded-circle"
-                />
-                <div class="notification-dot"></div>
+                <img [src]="chat.user.profile_photo" class="rounded-circle" />
+                <!-- Show notification dot if there are unread messages -->
+                <!-- <div *ngIf="chat.unread_count > 0" class="notification-dot"></div> -->
               </div>
               <div class="flex-grow-1 overflow-hidden">
                 <div class="d-flex justify-content-between">
-                  <h6 class="fw-bold mb-0 text-truncate">Robert Johnson</h6>
-                  <small class="text-muted flex-shrink-0">10m ago</small>
+                  <h6 class="fw-bold mb-0 text-truncate">{{ chat.user.name }}</h6>
+                  <small *ngIf="chat.messages.length > 0" class="text-muted flex-shrink-0">
+                    {{ chat.messages[chat.messages.length - 1]?.created_at | date : 'shortTime' }}
+                  </small>
                 </div>
-                <p class="mb-0 text-muted text-truncate small">
-                  <span class="fw-bold text-dark">You:</span> No problem, I'll be waiting for your
-                  call!
-                </p>
-              </div>
-            </div>
-
-            <!-- Chat List Item: Unread -->
-            <div class="d-flex align-items-center p-3 border-bottom chat-list-item">
-              <div class="position-relative avatar-container me-3">
-                <img
-                  src="https://images.unsplash.com/photo-1566753323558-f4e0952af115?auto=format&fit=crop&w=100&q=80"
-                  class="rounded-circle"
-                />
-                <div class="notification-dot"></div>
-              </div>
-              <div class="flex-grow-1 overflow-hidden">
-                <div class="d-flex justify-content-between">
-                  <h6 class="fw-bold mb-0 text-truncate">David Smith</h6>
-                  <small class="text-muted flex-shrink-0">1h ago</small>
-                </div>
-                <p class="mb-0 text-muted text-truncate small">
-                  <span class="fw-bold text-dark">David:</span> That's great to hear, thank you so
-                  much for the chat.
-                </p>
-              </div>
-            </div>
-
-            <!-- Chat List Item: Read -->
-            <div class="d-flex align-items-center p-3 border-bottom chat-list-item">
-              <div class="position-relative avatar-container me-3">
-                <img
-                  src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80"
-                  class="rounded-circle"
-                />
-              </div>
-              <div class="flex-grow-1 overflow-hidden">
-                <div class="d-flex justify-content-between">
-                  <h6 class="fw-bold mb-0 text-truncate">Michael Williams</h6>
-                  <small class="text-muted flex-shrink-0">Yesterday</small>
-                </div>
-                <p class="mb-0 text-muted text-truncate small">
-                  You: It was my pleasure! Have a great day.
+                <!-- Show last message content -->
+                <p *ngIf="chat.messages.length > 0" class="mb-0 text-muted text-truncate small">
+                  {{ chat.messages[chat.messages.length - 1]?.content }}
                 </p>
               </div>
             </div>
           </div>
         </div>
-
         <!-- RIGHT AREA: Placeholder / Welcome Message -->
         <div
           class="flex-grow-1 d-flex flex-column align-items-center justify-content-center bg-light text-center p-5"
@@ -106,13 +75,42 @@
           <p class="text-muted">Choose a chat from the left panel to view messages and reply.</p>
 
           <div class="mt-4 card p-3" style="max-width: 400px">
-            <h5 class="fw-bold">New Chats Available</h5>
+            <h5 class="fw-bold">
+              New Chats Available ({{ unclaimedChats ? unclaimedChats.length : 0 }})
+            </h5>
             <p class="text-muted small">
               There are new clients waiting to chat. Claim a conversation to start earning.
             </p>
-            <button class="btn btn-success fw-bold">View Unclaimed Chats</button>
+            <button
+              class="btn btn-success fw-bold"
+              (click)="showUnclaimedDialog = true"
+              [disabled]="!unclaimedChats || unclaimedChats.length === 0"
+            >
+              View Unclaimed Chats
+            </button>
           </div>
         </div>
+
+        <!-- PrimeNG Dialog for Unclaimed Chats -->
+        <p-dialog
+          header="Unclaimed Chats"
+          [(visible)]="showUnclaimedDialog"
+          [modal]="true"
+          [style]="{ width: '50vw' }"
+        >
+          <div class="list-group">
+            <a
+              *ngFor="let chat of unclaimedChats"
+              class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+            >
+              <div>
+                <h6 class="mb-1">{{ chat.user.name }}</h6>
+                <small class="text-muted">Last message: {{ chat.messages[0]?.content }}</small>
+              </div>
+              <button class="btn btn-primary btn-sm" (click)="claimChat(chat.id)">Claim</button>
+            </a>
+          </div>
+        </p-dialog>
       </div>
     </div>
   </div>

@@ -3,18 +3,28 @@ import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { AuthenticatedUserDTO, Writer, WriterProfileDTO } from '../data/auth-dto';
 import { isPlatformBrowser } from '@angular/common';
-import { environment } from '../../environments/environment.development';
-
+import { environment } from '../../environments/environment.development'; 
+import { WebSocketService } from '../components/web-socket-service';
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private platformId = inject(PLATFORM_ID);
   private baseUrl = environment.baseUrl;
-  constructor(private http: HttpClient) {
-    // This constructor check is good for robustness
+  constructor(private http: HttpClient,
+  private webSocketService: WebSocketService
+  ) {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('access_token');
+    }
+        this.checkTokenOnLoad();
+  }
+   private checkTokenOnLoad(): void {
+    const token = this.getAccessToken(); // Or your method to get the token
+    if (token) {
+      // If a token exists, the user is already logged in.
+      // Establish the WebSocket connection immediately.
+      this.webSocketService.connect();
     }
   }
   register(body: any): Observable<any> {
@@ -24,6 +34,7 @@ export class AuthService {
         if (isPlatformBrowser(this.platformId)) {
           if (response && response.token) {
             localStorage.setItem('access_token', response.token);
+              this.webSocketService.connect(); 
           }
         }
       })
@@ -38,6 +49,7 @@ export class AuthService {
           // Also guard the write operation
           if (response && response.token) {
             localStorage.setItem('access_token', response.token);
+              this.webSocketService.connect(); 
           }
         }
       })
@@ -70,6 +82,7 @@ export class AuthService {
   logout() {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('access_token');
+       this.webSocketService.disconnect();
     }
   }
 }

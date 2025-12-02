@@ -13,9 +13,7 @@
       <div class="d-flex align-items-center" *ngIf="userDetails">
         <div class="text-end me-3">
           <p class="fw-semibold m-0">{{ userDetails.name }}</p>
-          <p class="text-primary fw-bold m-0">
-            Credits: {{ userDetails.wallet.balance }} <i class="pi pi-dollar"></i>
-          </p>
+          <p class="text-primary fw-bold m-0">Tokens: {{ userDetails.wallet.balance }}</p>
         </div>
 
         <p-avatar

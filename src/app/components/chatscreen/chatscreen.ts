@@ -3,144 +3,173 @@ import { AuthenticatedUserDTO, UserDTO } from './../../data/auth-dto';
 import { MessageService } from 'primeng/api';
 import { AuthService } from './../../services/auth-service';
 import { Component } from '@angular/core';
-import { ToastModule } from "primeng/toast";
+import { ToastModule } from 'primeng/toast';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { DataService } from '../../services/data-service';
+import { Chat } from '../../services/chat';
+import { WebSocketService } from '../web-socket-service';
+import { LogbookService } from '../../services/logbook-service';
 @Component({
   selector: 'app-chatscreen',
-  imports: [ToastModule,FormsModule,AvatarModule,CommonModule],
+  imports: [ToastModule, FormsModule, AvatarModule, CommonModule],
   templateUrl: './chatscreen.html',
-  styleUrl: './chatscreen.css'
+  styleUrl: './chatscreen.css',
 })
 export class Chatscreen {
-  email:string | null=null;
-  password:string | null=null;
-  user!:AuthenticatedUserDTO;
-  name:string | null=null;
-    // Chat logic
+  writer: AuthenticatedUserDTO | null = null;
+  client: any | null = null;
+  messages: any[] = [];
+  logEntries: any[] = [];
+  currentChatId!: number;
+  isLoading = true;
+  isSending = false;
+  // --- INPUT & UI LOGIC ---
   replyText = '';
   minChars = 100;
-  writer = {
-    name: 'Maria Garcia',
-    balance: 125.5,
-    avatar:
-      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=100&q=80',
-  };
-
-  client = {
-    name: 'John Doe',
-    avatar:
-      'https://images.unsplash.com/photo-1566753323558-f4e0952af115?auto=format&fit=crop&w=150&q=80',
-    status: 'Online',
-    details: {
-      age: 58,
-      location: 'Denver, USA',
-      job: 'Doctor',
-      marital: 'Single',
-      smoking: 'Non-smoker',
-    },
-    bio: `Looking for a real connection. I enjoy working on cars, long drives, and good conversation.`,
-  };
-
-  logEntries: LogEntry[] = [
-    {
-      text: 'Sent a picture of his new truck.',
-      date: 'Sep 12, 2025 - 11:34',
-    },
-    {
-      text: 'Mentioned he had cataract surgery 6 years ago.',
-      date: 'Sep 06, 2025 - 04:33',
-    },
-    {
-      text: `He's a doctor, but currently installing an engine in his race car.`,
-      date: 'Sep 01, 2025 - 14:20',
-    },
-    {
-      text: 'Has 2 kids, both in college.',
-      date: 'Aug 29, 2025 - 09:12',
-    },
-  ];
-
-  messages: Message[] = [
-    {
-      sender: 'client',
-      text: `Sounds like a great idea. How long will it take you 
-        to install the engine, sweetheart?`,
-      time: '11:34 AM',
-      avatar:
-        'https://images.unsplash.com/photo-1566753323558-f4e0952af115?auto=format&fit=crop&w=80&q=80',
-    },
-    {
-      sender: 'writer',
-      text: `It's a detailed process! I'm hoping to have it done in
-        about 6 hours. I'll call you when I'm finished. I hope you have
-        a wonderful day as well, my dear. ***`,
-      time: '11:37 AM',
-      avatar:
-        'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=100&q=80',
-    },
-  ];
-constructor(
-  private authService:AuthService,
-  private messageService:MessageService,
-  private router:Router
-){}
-ngOnInit(){
-  const email = sessionStorage.getItem('email');
-  if(email){
-    this.email=email;
-  }
-  const password = sessionStorage.getItem('password');
-  if(password){
-    this.password=password;
-  }
-  this.fetchUserDetails();
-}
-fetchUserDetails(){
-  const body={
-    email:this.email,
-    password:this.password
-  }
-  this.authService.getUserDetails().subscribe({
-    next:(response)=>{
-      this.user=response;
-      this.name=this.user.name;
-    },
-    error:(err)=>{
-     this.handleApiError(err);
+  private channelName = '';
+  constructor(
+    private authService: AuthService,
+    private messageService: MessageService,
+    private router: Router,
+    private dataService: DataService,
+    private chatService: Chat,
+    private webSocketService: WebSocketService,
+    private logbookService:LogbookService
+  ) {}
+  ngOnInit() {
+    this.currentChatId = this.dataService.getChatId();
+    if (!this.currentChatId) {
+      this.router.navigate(['writer-dashboard']);
+      return;
     }
-  })
-}
-handleLogout(){
-  this.router.navigate(['/login']);
- 
-//   this.authService.logout().subscribe({
-//     next:(response)=>{
-// this.messageService.add({
-//               severity: 'success',
-//       summary: 'Success',
-//       detail:   response?.message || 'Logged out successfully' ,
-//       life: 3000,
-//         })
-//     },
-//    error:(err)=>{
-//      this.handleApiError(err);
-//     }
-//   })
-}
-handleApiError(err:any){
-  return(
-    this.messageService.add({
-              severity: 'error',
-      summary: 'Error',
-      detail:   err?.error?.message ,
-      life: 3000,
-        })
-  )
-}
- get charCount() {
+    if (this.currentChatId) {
+      this.channelName = `chat.${this.currentChatId}`;
+      // The connection is already established. Just start listening.
+      this.webSocketService.listen(this.channelName, 'NewMessageEvent', (newMessage: any) => {
+        this.messages.push(newMessage.message);
+        this.scrollToBottom();
+      });
+    }
+    this.fetchLoggedInWriterDetails();
+    this.loadInitialChatData();
+  }
+  ngOnDestroy() {
+    // Clean up the connection when the component is destroyed
+    // to prevent memory leaks and duplicate listeners.
+    if (this.channelName) {
+      this.webSocketService.leaveChannel(this.channelName);
+    }
+  }
+
+  fetchLoggedInWriterDetails() {
+    this.authService.getUserDetails().subscribe({
+      next: (response) => {
+        this.writer = response;
+      },
+      error: (err) => {
+        this.dataService.handleApiError(err);
+      },
+    });
+  }
+  /**
+   * Finds the message container element and scrolls it to the bottom.
+   * This ensures the most recent message is visible.
+   */
+  scrollToBottom(): void {
+    try {
+      const container = document.getElementById('messageArea');
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    } catch (err) {
+      //console.error('Could not scroll to bottom:', err);
+    }
+  }
+  loadInitialChatData() {
+    this.isLoading = true;
+    this.chatService.getChatMessages(this.currentChatId).subscribe({
+      next: (messages) => {
+        this.messages = messages;
+this.client=messages;
+        // Extract client info from the first message (if messages exist)
+        if (messages.length > 0) {
+          // We need an endpoint to get the client details properly.
+          // For now, we can try to find the client's info from a message.
+          const clientMessage = messages.find((m) => m.sender_type === 'user');
+          if (clientMessage) {
+            // This is a temporary solution. Ideally I'd have a getChatDetails endpoint.
+            // this.client = clientMessage.sender;
+          }
+        }
+
+        // After loading messages, mark them as read
+        this.chatService.markAsRead(this.currentChatId).subscribe();
+
+        this.isLoading = false;
+        setTimeout(() => this.scrollToBottom(), 100);
+        // NOW that we have the client's ID, fetch their logbook.
+        if (this.client) {
+          this.logbookService.getLogbookForUser(this.client.id).subscribe({
+            next: (logbookData) => {
+              this.logEntries = logbookData;
+              this.isLoading = false;
+            },
+            error: (err) => {
+               this.dataService.handleApiError(err);
+              this.isLoading = false;
+            }
+          });
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+       this.dataService.handleApiError(err);
+      },
+    });
+  }
+
+  sendMessage() {
+    if (this.sendDisabled || this.isSending) return;
+    this.isSending = true;
+
+    const payload = { content: this.replyText.trim() };
+
+    this.chatService.sendWriterMessage(this.currentChatId, payload).subscribe({
+      next: (response) => {
+        // Adding the new message returned from the server to our array
+        this.messages.push(response.data);
+        this.replyText = '';
+        this.isSending = false;
+        setTimeout(() => this.scrollToBottom(), 100);
+      },
+      error: (err) => {
+        this.isSending = false;
+       this.dataService.handleApiError(err);
+      },
+    });
+  }
+
+  handleLogout() {
+    this.router.navigate(['/login']);
+
+    //   this.authService.logout().subscribe({
+    //     next:(response)=>{
+    // this.messageService.add({
+    //               severity: 'success',
+    //       summary: 'Success',
+    //       detail:   response?.message || 'Logged out successfully' ,
+    //       life: 3000,
+    //         })
+    //     },
+    //    error:(err)=>{
+    //      this.handleApiError(err);
+    //     }
+    //   })
+  }
+
+  get charCount() {
     return this.replyText.length;
   }
 
