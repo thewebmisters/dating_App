@@ -17,13 +17,14 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('access_token');
     }
-        this.checkTokenOnLoad();
+     
   }
-   private checkTokenOnLoad(): void {
-    const token = this.getAccessToken(); // Or your method to get the token
+  
+  public initializeAuthentication(): void {
+    const token = this.getAccessToken();
     if (token) {
       // If a token exists, the user is already logged in.
-      // Establish the WebSocket connection immediately.
+      // Establish the WebSocket connection.
       this.webSocketService.connect();
     }
   }
