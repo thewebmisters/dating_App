@@ -65,7 +65,11 @@ export class AuthService {
     // If on the server, there is no token, so return null
     return null;
   }
+forgotPassword(payload:any):Observable<any>{
+  const fullUrl=`${this.baseUrl}/auth/forgot-password`;
+  return this.http.post(fullUrl,payload);
 
+}
   getUserDetails(): Observable<AuthenticatedUserDTO> {
     const fullUrl = `${environment.baseUrl}/auth/user`;
     return this.http.get<AuthenticatedUserDTO>(fullUrl);

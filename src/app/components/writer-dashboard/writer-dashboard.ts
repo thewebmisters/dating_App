@@ -1,16 +1,15 @@
-import { reqHandler } from './../../../server';
-import { AuthenticatedUserDTO, UnclaimedChats, UnclaimedChatsResponse } from './../../data/auth-dto';
+import  Pusher from 'pusher-js';
+import { AuthenticatedUserDTO } from './../../data/auth-dto';
 import { Component } from '@angular/core';
 import { Chat } from '../../services/chat';
 import { MessageService } from 'primeng/api';
-import { ChatSummary, ClaimedChat, PaginatedChatsResponse } from '../../data/chats-dto';
+import { ClaimedChat } from '../../data/chats-dto';
 import { DataService } from '../../services/data-service';
 import { AuthService } from '../../services/auth-service';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Dialog } from "primeng/dialog";
 import { Router } from '@angular/router';
 import { Toast } from "primeng/toast";
-
 @Component({
   selector: 'app-writer-dashboard',
   imports: [CommonModule, NgIf, Dialog, NgFor, Toast],
@@ -47,6 +46,7 @@ this.authService.getUserDetails().subscribe({
   }
 })
 }
+
 // fetchWriterChats():void{
 //   this.chatService.getWriterChats().subscribe({
 //     next:(response)=>{
