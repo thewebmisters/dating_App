@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { response } from 'express';
 import { MessageService } from 'primeng/api';
 
 @Injectable({
@@ -29,5 +30,8 @@ handleApiError(err:any){
       detail: err.error?.message || 'Failed to load resource',
       life: 3000,
     });
+  }
+  handleSuccess(response:any){
+    this.messageService.add({severity:'success',summary:'Success',detail:response.statusMessage || 'request was sucessful',life:300})
   }
   }

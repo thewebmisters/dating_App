@@ -43,8 +43,8 @@ export class WebSocketService {
       authEndpoint: `${environment.baseUrl}/broadcasting/auth`,
       auth: {
         headers: {
-          // This is now safe because AuthService will be fully constructed
           Authorization: `Bearer ${this.authService.getAccessToken()}`,
+          'Accept': 'application/json'
         },
       },
     });
@@ -59,10 +59,10 @@ export class WebSocketService {
    */
   listen(channel: string, event: string, callback: (data: any) => void) {
     if (!this.echo) {
-      console.error('Echo not connected. Call connect() first.');
+    //  console.error('Echo not connected. Call connect() first.');
       return;
     }
-
+//console.log('connected to pusher')
     this.echo.private(channel).listen(event, callback);
   }
 

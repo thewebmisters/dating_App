@@ -1,5 +1,5 @@
 import { AvatarModule } from 'primeng/avatar';
-import { AuthenticatedUserDTO, UserDTO } from './../../data/auth-dto';
+import { AuthenticatedUserDTO, UserDTO, Writer } from './../../data/auth-dto';
 import { MessageService } from 'primeng/api';
 import { AuthService } from './../../services/auth-service';
 import { Component } from '@angular/core';
@@ -25,6 +25,7 @@ export class Chatscreen {
   currentChatId!: number;
   isLoading = true;
   isSending = false;
+  writerId:number | undefined=undefined;
   // --- INPUT & UI LOGIC ---
   replyText = '';
   minChars = 100;
@@ -44,16 +45,30 @@ export class Chatscreen {
       this.router.navigate(['writer-dashboard']);
       return;
     }
+    this.fetchLoggedInWriterDetails();
+    this.writerId=this.writer?.id;
     if (this.currentChatId) {
       this.channelName = `chat.${this.currentChatId}`;
-      // The connection is already established. Just start listening.
-      this.webSocketService.listen(this.channelName, 'NewMessageEvent', (newMessage: any) => {
-        this.messages.push(newMessage.message);
+      this.webSocketService.listen(`private-App.Models.User.${this.writerId}`, 'NewMessage', (newMessage: any) => {
+        this.messages.push(newMessage.message.message);
         this.scrollToBottom();
       });
     }
-    this.fetchLoggedInWriterDetails();
     this.loadInitialChatData();
+  }
+  subscribeToWriterChannel(writerId: number): void {
+    this.channelName = `private-App.Models.User.${writerId}`;
+     this.webSocketService.listen(this.channelName, 'NewMessage', (eventData: any) => {
+      // Check if the incoming message belongs to the currently open chat
+      if (eventData.message && eventData.message.chat_id === this.currentChatId) {
+       // console.log('📨 New message for this chat:', eventData.message);
+        this.messages.push(eventData.message);
+        this.scrollToBottom();
+      } else {
+        console.log('Received a message for a different chat.', eventData);
+        // Here i can show a toast notification: "New message from [Client Name]"
+      }
+    });
   }
   ngOnDestroy() {
     // Clean up the connection when the component is destroyed
@@ -67,6 +82,9 @@ export class Chatscreen {
     this.authService.getUserDetails().subscribe({
       next: (response) => {
         this.writer = response;
+         if (this.writer) {
+          this.subscribeToWriterChannel(this.writer.id);
+        }
       },
       error: (err) => {
         this.dataService.handleApiError(err);

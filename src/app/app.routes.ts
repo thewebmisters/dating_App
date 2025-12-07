@@ -9,6 +9,7 @@ import { AdminPanel } from './components/admin-panel/admin-panel';
 import { ClientHome } from './components/client-home/client-home';
 import { BuyCredit } from './components/buy-credit/buy-credit';
 import { WriterDashboard } from './components/writer-dashboard/writer-dashboard';
+import { ResetPassword } from './components/reset-password/reset-password';
 
 export const routes: Routes = [
     {path:'landing-page',component:LandingPage},
@@ -21,6 +22,7 @@ export const routes: Routes = [
     {path:'buy-credit',component:BuyCredit},
     {path:'client-chat',component:ClientChat},
     {path:'writer-dashboard',component:WriterDashboard},
+    {path:'reset',component:ResetPassword},
     // Redirect any invalid URL to '/home'
     {path:'',component:LandingPage},
     {path:'**',component:LandingPage}

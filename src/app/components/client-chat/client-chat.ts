@@ -25,6 +25,7 @@ export class ClientChat {
   chatInput: string = '';
   isLoading = true;
   writerId!: number;
+  userId:number | undefined =undefined;
   private channelName = '';
   // Access the navigation state in the constructor.
   constructor(
@@ -43,6 +44,14 @@ export class ClientChat {
     }
   }
   ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      const user = sessionStorage.getItem('user');
+      if (user) {
+        this.userDetails = JSON.parse(user);
+         this.subscribeToClientChannel(this.userDetails.id);
+      }
+    }
+    this.userId=this.userDetails?.id;
     this.writerId = this.dataService.getId();
     if (!this.writerId) {
       this.router.navigate(['/login']);
@@ -51,23 +60,28 @@ export class ClientChat {
     this.fetchProfileById(this.writerId);
     if (this.writerId) {
       this.channelName = `chat.${this.writerId}`;
-      this.webSocketService.listen(this.channelName, 'NewMessageEvent', (newMessage: any) => {
-        this.messages.push(newMessage.message);
+      this.webSocketService.listen(`private-App.Models.User.${this.userId}`, 'NewMessage', (newMessage: any) => {
+        this.messages.push(newMessage.message.message);
         this.scrollToBottom();
       });
     }
-    if (isPlatformBrowser(this.platformId)) {
-      const user = sessionStorage.getItem('user');
-      if (user) {
-        this.userDetails = JSON.parse(user);
+    
+  }
+ subscribeToClientChannel(userId: number): void {
+    this.channelName = `private-App.Models.User.${userId}`;
+    this.webSocketService.listen(this.channelName, 'NewMessage', (eventData: any) => {
+      if (eventData.message && eventData.message.chat_id === this.writerProfile?.id) {
+        this.messages.push(eventData.message);
+        this.scrollToBottom();
       }
-    }
+    });
   }
   ngOnDestroy() {
     if (this.channelName) {
       this.webSocketService.leaveChannel(this.channelName);
     }
   }
+
   fetchProfileById(id: number) {
     this.isLoading = true;
     this.authService.getCurrentProfile(id).subscribe({
