@@ -47,21 +47,14 @@ export class Chatscreen {
     }
     this.fetchLoggedInWriterDetails();
     this.writerId=this.writer?.id;
-    if (this.currentChatId) {
-      this.channelName = `chat.${this.currentChatId}`;
-      this.webSocketService.listen(`private-App.Models.User.${this.writerId}`, 'NewMessage', (newMessage: any) => {
-        this.messages.push(newMessage.message.message);
-        this.scrollToBottom();
-      });
-    }
     this.loadInitialChatData();
   }
   subscribeToWriterChannel(writerId: number): void {
-    this.channelName = `private-App.Models.User.${writerId}`;
+    this.channelName = `App.Models.User.${writerId}`;
      this.webSocketService.listen(this.channelName, 'NewMessage', (eventData: any) => {
       // Check if the incoming message belongs to the currently open chat
       if (eventData.message && eventData.message.chat_id === this.currentChatId) {
-       // console.log('📨 New message for this chat:', eventData.message);
+       console.log('📨 New message for this chat:', eventData.message);
         this.messages.push(eventData.message);
         this.scrollToBottom();
       } else {

@@ -58,17 +58,10 @@ export class ClientChat {
       return;
     }
     this.fetchProfileById(this.writerId);
-    if (this.writerId) {
-      this.channelName = `chat.${this.writerId}`;
-      this.webSocketService.listen(`private-App.Models.User.${this.userId}`, 'NewMessage', (newMessage: any) => {
-        this.messages.push(newMessage.message.message);
-        this.scrollToBottom();
-      });
-    }
     
   }
  subscribeToClientChannel(userId: number): void {
-    this.channelName = `private-App.Models.User.${userId}`;
+    this.channelName = `App.Models.User.${userId}`;
     this.webSocketService.listen(this.channelName, 'NewMessage', (eventData: any) => {
       if (eventData.message && eventData.message.chat_id === this.writerProfile?.id) {
         this.messages.push(eventData.message);
