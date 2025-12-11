@@ -59,10 +59,10 @@ export class WebSocketService {
    */
   listen(channel: string, event: string, callback: (data: any) => void) {
     if (!this.echo) {
-    //  console.error('Echo not connected. Call connect() first.');
+     console.error('Echo not connected. Call connect() first.');
       return;
     }
-//console.log('connected to pusher')
+console.log('connected to pusher')
     this.echo.private(channel).listen(event, callback);
   }
 

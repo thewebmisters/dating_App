@@ -63,7 +63,6 @@ this.authService.getUserDetails().subscribe({
     this.chatService.getClaimedChats().subscribe({
       next: (response) => {
         this.writerChats = response;
-        console.log('Claimed chats response:', response);
       },
       error: (err) => {
         this.dataService.handleApiError(err);
@@ -108,8 +107,7 @@ this.unclaimedChats =response;
         this.showUnclaimedDialog = false;
         this.dataService.setChatId(chatId);
         const chatsid=this.dataService.getChatId();
-        console.log('claimed Chat Id',chatsid)
-         // OPTIONAL: Immediately navigate to the chat you just claimed
+        //console.log('claimed Chat Id',chatsid)
         this.router.navigate(['chat-screen']);
       },
       error: (err) => {
