@@ -48,8 +48,9 @@
             <!-- The Toggle Button -->
             <button
               class="btn btn-outline-secondary btn-icon"
-              type="button "
+              type="button"
               (click)="toggleVisibility('password')"
+              *ngIf="loginForm.get('password')?.value.length > 0"
             >
               <!-- Show 'eye' icon when password is not visible -->
               <i class="pi pi-eye" *ngIf="!passwordVisible"></i>
