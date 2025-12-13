@@ -13,6 +13,10 @@
       <div class="text-end me-3">
         <p class="fw-semibold mb-0">{{ userDetails.name }}</p>
         <p class="text-primary fw-bold small mb-0">Tokens: {{ userDetails.credits_balance }}</p>
+        <button class="btn btn-outline-danger btn-sm" (click)="logout()">
+          <i class="pi pi-sign-out me-2"></i>
+          Logout
+        </button>
       </div>
       <p-avatar
         [image]="userDetails.profile_photo"
@@ -91,7 +95,7 @@
 
     <!-- Input -->
     <div class="p-3 border-top bg-white">
-      <div class="input-group">
+      <div class="input-group align-items-stretch">
         <textarea
           [(ngModel)]="chatInput"
           rows="1"
@@ -100,12 +104,11 @@
           (keydown.enter)="sendMessage(); $event.preventDefault()"
         ></textarea>
         <button
-          pButton
-          class="btn btn-primary"
+          class="btn btn-primary d-flex align-items-center justify-content-center"
           [disabled]="!chatInput.trim() || isSending"
           (click)="sendMessage()"
         >
-          send
+          <i class="pi pi-send"></i>
         </button>
       </div>
     </div>

@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { DialogModule } from 'primeng/dialog';
 import { isPlatformBrowser } from '@angular/common';
 import { DataService } from '../../services/data-service';
+import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-client-home',
   templateUrl: './client-home.html',
@@ -27,6 +28,7 @@ export class ClientHome{
   constructor(private authService:AuthService,
     private router:Router,
     private dataService:DataService,
+   private messageService:MessageService,
     @Inject(PLATFORM_ID) private platformId: Object
   ){}
   ngOnInit(){
@@ -71,7 +73,7 @@ closeProfileDialog() {
     this.isBioTruncated = !this.isBioTruncated;
   }
   checkCreditBal(profile:Writer):void{
-  console.log('profile id>',profile.id);
+  //console.log('profile id>',profile.id);
     if(this.userDetails.wallet.tokens <= 0){
 this.router.navigate(['/buy-credit']);
     }else{
@@ -79,6 +81,17 @@ this.router.navigate(['/buy-credit']);
       this.dataService.setId(profile.id);
       sessionStorage.setItem('user',JSON.stringify(this.userDetails));
     }
-    
-  }
+    }
+     logout():void {
+    this.authService.logout().subscribe({
+        next:(response)=>{
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: response || 'logged out successfully' });
+    this.router.navigate(['/login']);
+        },
+        error:(err)=>{
+         this.dataService.handleApiError(err);
+         this.router.navigate(['/login']);
+        }
+      })
+      }
 }

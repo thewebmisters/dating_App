@@ -47,21 +47,22 @@ export class Chatscreen {
     }
     this.fetchLoggedInWriterDetails();
     this.writerId=this.writer?.id;
-    //this.loadInitialChatData();
+    this.loadInitialChatData();
   }
   subscribeToWriterChannel(writerId: number): void {
     this.channelName = `App.Models.User.${writerId}`;
      this.webSocketService.listen(this.channelName, '.NewMessage', (eventData: any) => {
-       console.log('📨 New message for this chat:',eventData.message.message);
+     //  console.log('📨 New message for this chat:',eventData.message.message);
        // console.log('📨 New message for this chat:', eventData);
       // Check if the incoming message belongs to the currently open chat
       if (eventData.message && eventData.message.chat_id === this.currentChatId) {
-       console.log('📨 New message for this chat:', eventData.message);
+      // console.log('📨 New message for this chat:', eventData.message);
         this.messages.push(eventData.message);
         this.scrollToBottom();
       } else {
-        console.log('the current chat id is not correct')
-        console.log('Received a message for a different chat.', eventData.message.sender_id);
+         this.dataService.handleApiError("You Received a message for a different chat");
+       // console.log('the current chat id is not correct')
+        //console.log('Received a message for a different chat.', eventData.message.sender_id);
         // Here i can show a toast notification: "New message from [Client Name]"
       }
     });
@@ -78,7 +79,7 @@ export class Chatscreen {
     this.authService.getUserDetails().subscribe({
       next: (response) => {
         this.writer = response;
-        //console.log('writer details',this.writer);
+      //  console.log('writer details',this.writer);
          if (this.writer?.id) {
           this.subscribeToWriterChannel(this.writer.id);
         }
@@ -103,47 +104,36 @@ export class Chatscreen {
     }
   }
   loadInitialChatData() {
-    this.isLoading = true;
-    this.chatService.getChatMessages(this.currentChatId).subscribe({
-      next: (messages) => {
-        this.messages = messages;
-this.client=messages;
-        // Extract client info from the first message (if messages exist)
-        if (messages.length > 0) {
-          // We need an endpoint to get the client details properly.
-          // For now, we can try to find the client's info from a message.
-          const clientMessage = messages.find((m) => m.sender_type === 'user');
-          if (clientMessage) {
-            // This is a temporary solution. Ideally I'd have a getChatDetails endpoint.
-            // this.client = clientMessage.sender;
-          }
-        }
-
-        // After loading messages, mark them as read
-        this.chatService.markAsRead(this.currentChatId).subscribe();
-
-        this.isLoading = false;
-        setTimeout(() => this.scrollToBottom(), 100);
-        // NOW that we have the client's ID, fetch their logbook.
-        if (this.client) {
-          this.logbookService.getLogbookForUser(this.client.id).subscribe({
-            next: (logbookData) => {
+  this.isLoading = true;
+  this.chatService.getChatMessages(this.currentChatId).subscribe({
+    next: (messagesResponse) => {
+      this.messages = Array.isArray(messagesResponse) ? messagesResponse : [];
+      //console.log('Initial messages loaded:', this.messages);
+      this.client = null;
+      this.chatService.markAsRead(this.currentChatId).subscribe();
+      this.isLoading = false;
+      setTimeout(() => this.scrollToBottom(), 100);
+      if (this.client) {
+        this.logbookService.getLogbookForUser(this.client.id).subscribe({
+          next: (logbookData) => {
               this.logEntries = logbookData;
               this.isLoading = false;
             },
             error: (err) => {
                this.dataService.handleApiError(err);
               this.isLoading = false;
+              this.messages = [];
             }
-          });
-        }
-      },
-      error: (err) => {
-        this.isLoading = false;
-       this.dataService.handleApiError(err);
-      },
-    });
-  }
+        });
+      }
+    },
+    error: (err) => {
+      this.isLoading = false;
+      this.dataService.handleApiError(err);
+      this.messages = []; 
+    },
+  });
+}
 
   sendMessage() {
     if (this.sendDisabled || this.isSending) return;
@@ -153,6 +143,7 @@ this.client=messages;
 
     this.chatService.sendWriterMessage(this.currentChatId, payload).subscribe({
       next: (response) => {
+      //  console.log('ressponse is',response)
         // Adding the new message returned from the server to our array
         this.messages.push(response.data);
         this.replyText = '';
@@ -166,23 +157,18 @@ this.client=messages;
     });
   }
 
-  handleLogout() {
+  logout():void {
+    this.authService.logout().subscribe({
+        next:(response)=>{
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: response || 'logged out successfully' });
     this.router.navigate(['/login']);
-
-    //   this.authService.logout().subscribe({
-    //     next:(response)=>{
-    // this.messageService.add({
-    //               severity: 'success',
-    //       summary: 'Success',
-    //       detail:   response?.message || 'Logged out successfully' ,
-    //       life: 3000,
-    //         })
-    //     },
-    //    error:(err)=>{
-    //      this.handleApiError(err);
-    //     }
-    //   })
-  }
+        },
+        error:(err)=>{
+         this.dataService.handleApiError(err);
+         this.router.navigate(['/login']);
+        }
+      })
+      }
 
   get charCount() {
     return this.replyText.length;

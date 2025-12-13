@@ -10,6 +10,7 @@ import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Dialog } from "primeng/dialog";
 import { Router } from '@angular/router';
 import { Toast } from "primeng/toast";
+import { WebSocketService } from '../web-socket-service';
 @Component({
   selector: 'app-writer-dashboard',
   imports: [CommonModule, NgIf, Dialog, NgFor, Toast],
@@ -28,7 +29,8 @@ constructor(
   private messageService:MessageService,
   private dataService:DataService,
   private authService:AuthService,
-  private router:Router
+  private router:Router,
+  private webSocketService:WebSocketService
 ){}
 ngOnInit(){
   //this.fetchWriterChats();
@@ -40,7 +42,7 @@ fetchAuthUserDetails():void{
 this.authService.getUserDetails().subscribe({
   next:(response)=>{
     this.authUserDetails=response;
-    console.log('writer details',this.authUserDetails)
+    //console.log('writer details',this.authUserDetails)
   },
   error:(err)=>{
     this.dataService.handleApiError(err);
@@ -91,7 +93,7 @@ this.unclaimedChats =response;
      this.dataService.setChatId(chat.id);
      const chatsid=this.dataService.getChatId();
      this.activeChatId = chat.id
-    console.log('claimed Chat Id',chatsid)
+    //console.log('claimed Chat Id',chatsid)
     this.router.navigate(['chat-screen']);
   }
   /**
@@ -116,4 +118,16 @@ this.unclaimedChats =response;
       }
     });
   }
+     logout():void {
+    this.authService.logout().subscribe({
+        next:(response)=>{
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: response || 'logged out successfully' });
+    this.router.navigate(['/login']);
+        },
+        error:(err)=>{
+         this.dataService.handleApiError(err);
+         this.router.navigate(['/login']);
+        }
+      })
+      }
 }
