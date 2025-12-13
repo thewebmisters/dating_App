@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
@@ -7,7 +7,7 @@ import { BadgeModule } from 'primeng/badge';
 import { Router } from "@angular/router";
 @Component({
   selector: 'app-buy-credit',
-  imports: [ButtonModule, AvatarModule, BadgeModule, CardModule, CommonModule],
+  imports: [ButtonModule, AvatarModule, BadgeModule, CardModule, CommonModule,NgIf],
   templateUrl: './buy-credit.html',
   styleUrl: './buy-credit.css'
 })
@@ -17,17 +17,15 @@ export class BuyCredit {
     private router:Router
   ){}
   ngOnInit(){
-      const user=sessionStorage.getItem('user');
-    if(user){
-      this.userDetails=JSON.parse(user);
-    }
+    //   const user=sessionStorage.getItem('user');
+    // if(user){
+    //   this.userDetails=JSON.parse(user);
+    // }else{
+    //   this.userDetails=null;
+    // }
+  this.userDetails = [];
   }
- user:any = {
-    name: 'John Doe',
-    credits: 500,
-    avatar:
-      'https://images.unsplash.com/photo-1566753323558-f4e0952af115?auto=format&fit=crop&w=100&q=80',
-  };
+
 
   packages: Package[] = [
     {

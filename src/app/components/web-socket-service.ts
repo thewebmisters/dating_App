@@ -16,7 +16,7 @@ export class WebSocketService {
   echo!: Echo<any> | undefined;
   // Private property to hold the lazily-loaded AuthService
   private authService!: AuthService;
-  constructor(private injector: Injector) {}
+  constructor() {}
   /**
    * Initializes the Laravel Echo instance.
    * This should be called once the user is logged in.
@@ -25,13 +25,13 @@ export class WebSocketService {
    * Initializes the Laravel Echo instance.
    */
   
-    connect(): void {
-    if (this.echo) {
+    connect(token: string | null): void {
+     if (!token) {
+      this.disconnect();
       return;
     }
-   // Lazily get the AuthService instance ONLY when connect() is called.
-    if (!this.authService) {
-      this.authService = this.injector.get(AuthService);
+    if (this.echo) {
+      return;
     }
     (window as any).Pusher = Pusher;
 
@@ -43,7 +43,7 @@ export class WebSocketService {
       authEndpoint: `${environment.baseUrl}/broadcasting/auth`,
       auth: {
         headers: {
-          Authorization: `Bearer ${this.authService.getAccessToken()}`,
+          Authorization: `Bearer ${token}`,
           'Accept': 'application/json'
         },
       },

@@ -9,11 +9,11 @@
           class="rounded-circle"
           alt="Logo"
         />
-        <a class="h5 fw-bold text-dark ms-3 text-decoration-none">Chathomebase</a>
+        <a class="h5 fw-bold text-dark ms-3 text-decoration-none">RealSpark</a>
       </div>
 
       <!-- User area -->
-      <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center" *ngIf="userDetails">
         <a class="btn text-muted me-4 text-decoration-none" (click)="navigateToClientScreen()"
           >&larr; Back to Chat</a
         >
@@ -21,7 +21,7 @@
         <div class="text-end me-3">
           <p class="fw-semibold m-0">{{ userDetails.name }}</p>
           <p class="text-primary fw-bold m-0">
-            Credits: {{ userDetails.credits_balance }}
+            Credits: {{ userDetails.wallet.token }}
             <i class="pi pi-dollar"></i>
           </p>
         </div>

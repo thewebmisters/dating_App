@@ -13,29 +13,22 @@ export class AuthService {
   private baseUrl = environment.baseUrl;
   constructor(private http: HttpClient,
   private webSocketService: WebSocketService
-  ) {
-    if (isPlatformBrowser(this.platformId)) {
-      const token = localStorage.getItem('access_token');
-    }
-     
-  }
+  ) {}
   
-  public initializeAuthentication(): void {
-    const token = this.getAccessToken();
-    if (token) {
-      // If a token exists, the user is already logged in.
-      // Establish the WebSocket connection.
-      this.webSocketService.connect();
-    }
+ public initializeAuthentication(): void {
+ const token =  this.getAccessToken(); 
+    // Pass the token to the connect method
+    this.webSocketService.connect(token);
   }
   register(body: any): Observable<any> {
     const fullUrl = `${environment.baseUrl}/auth/register`;
     return this.http.post<any>(fullUrl, body).pipe(
       tap((response) => {
         if (isPlatformBrowser(this.platformId)) {
-          if (response && response.token) {
-            localStorage.setItem('access_token', response.token);
-              this.webSocketService.connect(); 
+          if (response?.token) {
+             const token = response.token;
+            localStorage.setItem('access_token',token);
+              this.webSocketService.connect(token);
           }
         }
       })
@@ -48,9 +41,10 @@ export class AuthService {
       tap((response) => {
         if (isPlatformBrowser(this.platformId)) {
           // Also guard the write operation
-          if (response && response.token) {
-            localStorage.setItem('access_token', response.token);
-              this.webSocketService.connect(); 
+          if (response?.token) {
+             const token = response.token;
+            localStorage.setItem('access_token',token);
+              this.webSocketService.connect(token);
           }
         }
       })
@@ -75,9 +69,9 @@ forgotPassword(payload:any):Observable<any>{
     return this.http.get<AuthenticatedUserDTO>(fullUrl);
   }
 
-  getProfiles(): Observable<WriterProfileDTO> {
+  getProfiles(): Observable<Writer[]> {
     const fullUrl = `${environment.baseUrl}/profiles`;
-    return this.http.get<WriterProfileDTO>(fullUrl);
+    return this.http.get<Writer[]>(fullUrl);
   }
   getCurrentProfile(id: number): Observable<Writer> {
     const fullUrl = `${environment.baseUrl}/profiles/${id}`;
