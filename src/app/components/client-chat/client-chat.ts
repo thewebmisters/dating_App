@@ -62,8 +62,10 @@ export class ClientChat {
   }
  subscribeToClientChannel(userId: number): void {
     this.channelName = `App.Models.User.${userId}`;
-    this.webSocketService.listen(this.channelName, 'NewMessage', (eventData: any) => {
-      if (eventData.message && eventData.message.chat_id === this.writerProfile?.id) {
+    console.log('my channel is',this.channelName)
+    this.webSocketService.listen(this.channelName, '.NewMessage', (eventData: any) => {
+      console.log('subscribed to event',eventData.message);
+      if (eventData.message && eventData.message.sender_id === this.writerProfile?.id) {
         this.messages.push(eventData.message);
         this.scrollToBottom();
       }

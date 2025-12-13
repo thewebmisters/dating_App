@@ -30,14 +30,14 @@ export class ClientHome{
     @Inject(PLATFORM_ID) private platformId: Object
   ){}
   ngOnInit(){
-
+ this.fetchAuthenticatedUsrDetails();
     this.fetchProfiles();
-    this.fetchAuthenticatedUsrDetails();
     }
     fetchAuthenticatedUsrDetails():void{
       this.authService.getUserDetails().subscribe({
         next:(response)=>{
           this.userDetails = response;
+         // console.log('user details',this.userDetails.wallet);
           },
           error:(err)=>{
  this.dataService.handleApiError(err);
@@ -47,7 +47,7 @@ export class ClientHome{
   fetchProfiles(){
     this.authService.getProfiles().subscribe({
       next:(response)=>{
-        this.writerProfiles=response.data;
+        this.writerProfiles=response;
       },
       error:(err)=>{
       this.dataService.handleApiError(err);
@@ -57,7 +57,7 @@ export class ClientHome{
  openProfileCard(profile: Writer) {
   this.visible=true;
   this.selectedProfile = profile;
-  console.log('profile id',this.selectedProfile.id);
+  //console.log('profile id',this.selectedProfile.id);
     this.isBioTruncated = true; 
 }
 closeProfileDialog() {
@@ -71,7 +71,8 @@ closeProfileDialog() {
     this.isBioTruncated = !this.isBioTruncated;
   }
   checkCreditBal(profile:Writer):void{
-    if(Number(this.userDetails.wallet.balance)<=0){
+  console.log('profile id>',profile.id);
+    if(this.userDetails.wallet.tokens <= 0){
 this.router.navigate(['/buy-credit']);
     }else{
       this.router.navigate(['/client-chat']);

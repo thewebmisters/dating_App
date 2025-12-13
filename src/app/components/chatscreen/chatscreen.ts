@@ -47,18 +47,21 @@ export class Chatscreen {
     }
     this.fetchLoggedInWriterDetails();
     this.writerId=this.writer?.id;
-    this.loadInitialChatData();
+    //this.loadInitialChatData();
   }
   subscribeToWriterChannel(writerId: number): void {
     this.channelName = `App.Models.User.${writerId}`;
-     this.webSocketService.listen(this.channelName, 'NewMessage', (eventData: any) => {
+     this.webSocketService.listen(this.channelName, '.NewMessage', (eventData: any) => {
+       console.log('📨 New message for this chat:',eventData.message.message);
+       // console.log('📨 New message for this chat:', eventData);
       // Check if the incoming message belongs to the currently open chat
       if (eventData.message && eventData.message.chat_id === this.currentChatId) {
        console.log('📨 New message for this chat:', eventData.message);
         this.messages.push(eventData.message);
         this.scrollToBottom();
       } else {
-        console.log('Received a message for a different chat.', eventData);
+        console.log('the current chat id is not correct')
+        console.log('Received a message for a different chat.', eventData.message.sender_id);
         // Here i can show a toast notification: "New message from [Client Name]"
       }
     });
@@ -75,7 +78,8 @@ export class Chatscreen {
     this.authService.getUserDetails().subscribe({
       next: (response) => {
         this.writer = response;
-         if (this.writer) {
+        //console.log('writer details',this.writer);
+         if (this.writer?.id) {
           this.subscribeToWriterChannel(this.writer.id);
         }
       },
