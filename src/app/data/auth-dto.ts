@@ -53,7 +53,6 @@ export interface Writer{
       ]
 }
 export interface WriterProfileDTO {
-  current_page: number;
   data:Writer[]
 }
 export interface AuthenticatedUserDTO {

@@ -39,7 +39,8 @@ ngOnInit(){
 fetchAuthUserDetails():void{
 this.authService.getUserDetails().subscribe({
   next:(response)=>{
-    this. authUserDetails=response;
+    this.authUserDetails=response;
+    console.log('writer details',this.authUserDetails)
   },
   error:(err)=>{
     this.dataService.handleApiError(err);

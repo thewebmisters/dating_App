@@ -66,11 +66,11 @@
 
       <ng-container *ngFor="let msg of messages">
         <!-- Incoming messages from the writer -->
-        <!-- The sender_type is 'profile' or 'writer' (check your API) -->
+        <!-- The sender_type is 'profile' or 'writer'  -->
         <div class="d-flex mb-3" *ngIf="msg.sender_id === writerProfile.id">
           <div class="bg-secondary p-3 rounded shadow-sm" style="max-width: 60%">
             <!-- Use msg.content -->
-            <p class="mb-1">{{ msg.content }}</p>
+            <p class="mb-1" style="word-wrap: break-word">{{ msg?.message }}</p>
             <!-- Use msg.created_at and the date pipe -->
             <span class="text-muted small">{{ msg.created_at | date : 'shortTime' }}</span>
           </div>
@@ -81,7 +81,7 @@
         <div class="d-flex justify-content-end mb-3" *ngIf="msg.sender_id === userDetails.id">
           <div class="text-white p-3 rounded bg-primary shadow-sm" style="max-width: 60%">
             <!-- Use msg.content -->
-            <p class="mb-1">{{ msg.content }}</p>
+            <p class="mb-1" style="word-wrap: break-word">{{ msg.content }}</p>
             <!-- Use msg.created_at and the date pipe -->
             <span class="small opacity-75">{{ msg.created_at | date : 'shortTime' }}</span>
           </div>
@@ -101,11 +101,12 @@
         ></textarea>
         <button
           pButton
-          icon="pi pi-send"
           class="btn btn-primary"
           [disabled]="!chatInput.trim() || isSending"
           (click)="sendMessage()"
-        ></button>
+        >
+          send
+        </button>
       </div>
     </div>
   </div>
