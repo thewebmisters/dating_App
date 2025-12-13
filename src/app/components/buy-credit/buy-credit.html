@@ -19,15 +19,12 @@
         >
 
         <div class="text-end me-3">
-          <p class="fw-semibold m-0">{{ userDetails.name }}</p>
-          <p class="text-primary fw-bold m-0">
-            Credits: {{ userDetails.wallet.token }}
-            <i class="pi pi-dollar"></i>
-          </p>
+          <p class="fw-semibold m-0">{{ userDetails?.name }}</p>
+          <p class="text-primary fw-bold m-0">Token: {{ userDetails?.wallet?.tokens }}</p>
         </div>
 
         <p-avatar
-          [image]="userDetails.profile_photo"
+          [image]="userDetails?.profile_photo"
           shape="circle"
           size="large"
           class="mr-2"
@@ -48,12 +45,12 @@
     </div>
 
     <!-- Packages -->
-    <div class="row justify-content-center g-4">
+    <div class="row justify-content-center g-4" *ngIf="packages">
       <div class="col-12 col-md-4" *ngFor="let pkg of packages">
         <p-card class="p-3 shadow-sm border-0 position-relative">
           <!-- Best value badge -->
           <span
-            *ngIf="pkg.best"
+            *ngIf="pkg?.is_active == true"
             class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-primary text-white px-3 py-1"
             style="font-size: 0.7rem"
           >
@@ -61,16 +58,16 @@
           </span>
 
           <div class="text-center">
-            <h4 class="fw-semibold text-dark">{{ pkg.title }}</h4>
+            <h4 class="fw-semibold text-dark">{{ pkg?.name }}</h4>
 
-            <p class="display-5 text-primary fw-bold mt-3">{{ pkg.credits }}</p>
+            <p class="display-5 text-primary fw-bold mt-3">{{ pkg?.tokens }}</p>
 
-            <p class="text-muted">
+            <!-- <p class="text-muted">
               Credits
-              <span class="text-success fw-bold" *ngIf="pkg.bonus"> ({{ pkg.bonus }}) </span>
-            </p>
+              <span class="text-success fw-bold" *ngIf="pkg?.bonus"> ({{ pkg?.bonus }}) </span>
+            </p> -->
 
-            <p class="h3 fw-bold my-4">${{ pkg.price.toFixed(2) }}</p>
+            <p class="h3 fw-bold my-4">${{ pkg?.price }}</p>
 
             <button pButton class="w-100 py-3 fw-bold border-0 paypal-btn">
               <i class="pi pi-paypal me-2"></i>
