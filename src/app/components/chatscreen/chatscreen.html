@@ -10,13 +10,17 @@
         <img src="https://placehold.co/40x40/2A4A7C/FFFFFF?text=C" class="rounded-circle" />
         <h2 class="h5 fw-bold text-dark ms-3 mb-0">RealSpark</h2>
 
-        <span class="ms-3 badge bg-secondary text-dark fw-semibold"> Writer Dashboard </span>
+        <span class="ms-3 badge bg-secondary text-dark fw-semibold">Dashboard </span>
       </div>
 
       <div class="d-flex align-items-center" *ngIf="writer">
         <div class="me-3 text-end">
           <p class="fw-semibold text-primary mb-1">{{ writer.name }}</p>
           <p class="text-success fw-bold mb-0">Balance: ${{ writer.wallet.balance }}</p>
+          <button class="btn btn-outline-danger btn-sm" (click)="logout()">
+            <i class="pi pi-sign-out me-2"></i>
+            Logout
+          </button>
         </div>
 
         <p-avatar
@@ -87,12 +91,12 @@
                 *ngIf="msg.sender_type === 'profile'"
                 class="d-flex align-items-start gap-3 flex-row-reverse text-end"
               >
-                <img [src]="msg.avatar" class="rounded-circle" width="40" height="40" />
+                <img [src]="writer?.profile_photo" class="rounded-circle" width="40" height="40" />
                 <div
                   class="p-3 bg-primary text-white rounded rounded-end-0 shadow-sm"
                   style="max-width: 60%"
                 >
-                  <p class="mb-1 small" style="word-wrap: break-word">{{ msg?.content }}</p>
+                  <p class="mb-1 small" style="word-wrap: break-word">{{ msg?.message }}</p>
                   <p class="text-light small">{{ msg?.created_at | date : 'shortTime' }}</p>
                 </div>
               </div>

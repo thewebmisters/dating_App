@@ -60,7 +60,7 @@ getUnclaimedChats(): Observable<any[]> {
   getChatMessages(chatId: number): Observable<any[]> {
     const fullUrl = `${this.baseUrl}/chats/${chatId}/messages`;
     return this.http.get<any>(fullUrl).pipe(
-      map(response => response.data.data) // Extract the nested message array
+      map(response => response.data) // Extract the nested message array
     );
   }
 
