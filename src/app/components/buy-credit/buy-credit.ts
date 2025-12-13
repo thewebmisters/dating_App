@@ -5,6 +5,10 @@ import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
 import { Router } from "@angular/router";
+import { AuthService } from '../../services/auth-service';
+import { DataService } from '../../services/data-service';
+import { PurchaseService } from '../../services/purchase-service';
+import { TokenPackageDto } from '../../data/tokens-dto';
 @Component({
   selector: 'app-buy-credit',
   imports: [ButtonModule, AvatarModule, BadgeModule, CardModule, CommonModule,NgIf],
@@ -13,8 +17,12 @@ import { Router } from "@angular/router";
 })
 export class BuyCredit {
    userDetails:any;
+   packages:TokenPackageDto[]=[];
   constructor(
-    private router:Router
+    private router:Router,
+    private authService:AuthService,
+    private dataService:DataService,
+    private purchaseService:PurchaseService
   ){}
   ngOnInit(){
     //   const user=sessionStorage.getItem('user');
@@ -23,29 +31,34 @@ export class BuyCredit {
     // }else{
     //   this.userDetails=null;
     // }
-  this.userDetails = [];
+
+ this.fetchAuthenticatedUsrDetails();
+ this.getPackages();
   }
 
-
-  packages: Package[] = [
-    {
-      title: 'Starter Pack',
-      credits: 300,
-      price: 10,
-    },
-    {
-      title: 'Connector',
-      credits: 1000,
-      price: 25,
-      bonus: '+100 Bonus!',
-      best: true,
-    },
-    {
-      title: 'Connoisseur',
-      credits: 2500,
-      price: 50,
-    },
-  ];
+ fetchAuthenticatedUsrDetails():void{
+      this.authService.getUserDetails().subscribe({
+        next:(response)=>{
+          this.userDetails = response;
+         // console.log('user details',this.userDetails.wallet);
+          },
+          error:(err)=>{
+ this.dataService.handleApiError(err);
+      }
+      })
+    }
+    getPackages():void{
+      this.purchaseService.getPackages().subscribe({
+        next:(response)=>{
+this.packages=response.data;
+//console.log('packages',this.packages);
+        },
+        error:(err)=>{
+          this.dataService.handleApiError(err);
+        }
+      })
+    }
+ 
   navigateToClientScreen(){
     this.router.navigate(['/client-home']);
   }
