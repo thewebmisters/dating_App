@@ -78,10 +78,25 @@ forgotPassword(payload:any):Observable<any>{
     return this.http.get<Writer>(fullUrl);
   }
 
-  logout() {
+ logout(): Observable<any> {
+    const fullUrl = `${environment.baseUrl}/auth/logout`;
+    return this.http.post<any>(fullUrl, {}).pipe(
+      tap({
+        next: () => this.performClientSideLogout(),
+        error: () => this.performClientSideLogout()
+      })
+    );
+  }
+
+    /**
+   * Performs all the client-side cleanup for logging out.
+   */
+  performClientSideLogout(): void {
     if (isPlatformBrowser(this.platformId)) {
+      this.webSocketService.disconnect();
       localStorage.removeItem('access_token');
-       this.webSocketService.disconnect();
+      sessionStorage.clear();
+     
     }
   }
 }
