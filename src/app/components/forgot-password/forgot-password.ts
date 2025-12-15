@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 export class ForgotPassword {
   forgotPasswordForm!:FormGroup;
   isLoading:boolean=false;
+    emailPattern: string = '^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
 constructor(private router:Router,
   private fb:FormBuilder,
   private authService:AuthService,
@@ -28,20 +29,26 @@ ngOnInit(){
 }
 initializeForm(){
   this.forgotPasswordForm =  this.fb.group({
-    email:['',Validators.required]
+     email: ['', [Validators.required, Validators.pattern(this.emailPattern)]]
   })
 }
   navigateToLogin(): void {
     this.router.navigate(['/login']);
   }
   forgotPassword():void{
+    this.forgotPasswordForm.markAllAsTouched();
+    if(this.forgotPasswordForm.invalid){
+      this.dataService.handleFormError('Please fill all the data required correctly!');
+      return;
+    }
     this.isLoading=true;
     const userEmail=this.forgotPasswordForm.value;
     const email=userEmail
      this.authService.forgotPassword(email).subscribe({
       next:(response)=>{
         this.isLoading=false;
-this.messageService.add({severity:'success',summary:'Success',detail:'A reset link was sent to your email',life:300})
+  this.dataService.handleSuccess(response);
+this.router.navigate(['/reset']);
       },
       error:(err)=>{
         this.isLoading=false;

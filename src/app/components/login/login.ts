@@ -20,7 +20,7 @@ export class Login {
   isLoading:boolean=false;
   userDetails:any;
    passwordVisible: boolean = false;
-
+  emailPattern: string = '^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
 constructor(
 private fb:FormBuilder,
 private router:Router,
@@ -33,7 +33,7 @@ ngOnInit(){
 }
 initializeLoginForm():void{
   this.loginForm = this.fb.group({
-email:['',Validators.required],
+ email: ['', [Validators.required, Validators.pattern(this.emailPattern)]],
 password:['',Validators.required]
   })
 }

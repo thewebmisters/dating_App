@@ -27,11 +27,19 @@ handleApiError(err:any){
  this.messageService.add({
       severity: 'error',
       summary: 'Error',
-      detail: err.error?.message || 'Failed to load resource',
+      detail: err.error?.message  || 'Failed to load resource',
+      life: 3000,
+    });
+  }
+  handleFormError(err:any){
+ this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: err,
       life: 3000,
     });
   }
   handleSuccess(response:any){
-    this.messageService.add({severity:'success',summary:'Success',detail:response.statusMessage || 'request was sucessful',life:300})
+    this.messageService.add({severity:'success',summary:'Success',detail:response.message || 'success!',life:300})
   }
   }
