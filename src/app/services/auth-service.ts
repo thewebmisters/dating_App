@@ -64,6 +64,10 @@ forgotPassword(payload:any):Observable<any>{
   return this.http.post(fullUrl,payload);
 
 }
+resetPassword(payload:any){
+  const fullUrl = `${this.baseUrl}/auth/reset-password`;
+  return this.http.post(fullUrl,payload);
+}
   getUserDetails(): Observable<AuthenticatedUserDTO> {
     const fullUrl = `${environment.baseUrl}/auth/user`;
     return this.http.get<AuthenticatedUserDTO>(fullUrl);
