@@ -13,3 +13,8 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.required::after{
+  content:'*';
+   margin-left:2px;
+    color:#dc3545;
+}

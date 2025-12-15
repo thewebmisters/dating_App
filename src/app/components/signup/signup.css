@@ -1,8 +1,4 @@
-.required::after{
-    margin-left:2px;
-    color:#dc3545;
-    content:"*"
-}
+
 .btn-icon {
   border: none;
   background: transparent;
