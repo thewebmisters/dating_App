@@ -8,11 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:dating_app": "node dist/dating_app/server/server.mjs",
-"build:vercel": "ng build --prerender=false && cp -r dist/dating_app .vercel/output"
-
-
-
-  },
+ "build:vercel": "ng build --prerender=false"
+ },
   "prettier": {
     "printWidth": 100,
     "singleQuote": true,

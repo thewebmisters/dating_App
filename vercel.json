@@ -1,9 +1,15 @@
 {
   "version": 2,
   "builds": [
-    { "src": ".vercel/output/dating_app/server/server.mjs", "use": "@vercel/node" }
+    {
+      "src": "dist/dating_app/server/server.mjs",
+      "use": "@vercel/node"
+    }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": ".vercel/output/dating_app/server/server.mjs" }
+    {
+      "src": "/(.*)",
+      "dest": "dist/dating_app/server/server.mjs"
+    }
   ]
 }
