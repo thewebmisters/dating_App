@@ -52,14 +52,28 @@ export class ClientChat {
       }
     }
     this.userId=this.userDetails?.id;
-    this.writerId = this.dataService.getId();
-    if (!this.writerId) {
-      this.router.navigate(['/login']);
-      return;
+    const idFromUrl = this.route.snapshot.paramMap.get('id');
+    if (idFromUrl) {
+      // Convert the string from the URL to a number
+      this.writerId = parseInt(idFromUrl, 10);
+      
+      // Now that we have a reliable ID, fetch the profile
+      this.fetchProfileById(this.writerId);
+    } else {
+      // If there's no ID in the URL, something is wrong. Go back home.
+      console.error("No writer ID found in URL. Redirecting.");
+      this.router.navigate(['/client-home']);
     }
-    this.fetchProfileById(this.writerId);
-    
   }
+
+  //   this.writerId = this.dataService.getId();
+  //   if (!this.writerId) {
+  //     this.router.navigate(['/login']);
+  //     return;
+  //   }
+  //   this.fetchProfileById(this.writerId);
+    
+  // }
  subscribeToClientChannel(userId: number): void {
     this.channelName = `App.Models.User.${userId}`;
     //console.log('my channel is',this.channelName)

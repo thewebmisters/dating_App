@@ -8,7 +8,9 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:dating_app": "node dist/dating_app/server/server.mjs",
-    "build:prerender": "ng build --configuration production"
+  "build:vercel": "ng build --prerender"
+
+
   },
   "prettier": {
     "printWidth": 100,
