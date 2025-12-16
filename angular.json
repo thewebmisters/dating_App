@@ -111,17 +111,7 @@
               "/client-home",
               "/buy-credit"
             ]
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "dating_app:build:production"
-            },
-            "development": {
-              "buildTarget": "dating_app:build:development"
-            }
-          },
-          "defaultConfiguration": "production"
-        }
+          }}
       }
     }
   }
