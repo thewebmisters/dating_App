@@ -15,7 +15,7 @@ export class WebSocketService {
    */
   echo!: Echo<any> | undefined;
   // Private property to hold the lazily-loaded AuthService
-  private authService!: AuthService;
+  //private authService!: AuthService;
   constructor() {}
   /**
    * Initializes the Laravel Echo instance.
@@ -25,14 +25,18 @@ export class WebSocketService {
    * Initializes the Laravel Echo instance.
    */
   
-    connect(token: string | null): void {
-     if (!token) {
+     connect(token: string | null): void {
+    if (!token) {
       this.disconnect();
       return;
     }
+
     if (this.echo) {
+      // If already connected, you might want to re-authenticate with the new token.
+      // For now, returning is simple and safe.
       return;
     }
+    
     (window as any).Pusher = Pusher;
 
     this.echo = new Echo({
@@ -43,13 +47,12 @@ export class WebSocketService {
       authEndpoint: `${environment.baseUrl}/broadcasting/auth`,
       auth: {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // Use the token passed as an argument
           'Accept': 'application/json'
         },
       },
     });
   }
-
 
   /**
    * Listens for an event on a specific private channel.
@@ -62,7 +65,7 @@ export class WebSocketService {
      console.error('Echo not connected. Call connect() first.');
       return;
     }
-console.log('connected to pusher')
+//console.log('connected to pusher')
     this.echo.private(channel).listen(event, callback);
   }
 

@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { inject, Injectable, Injector, PLATFORM_ID } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { AuthenticatedUserDTO, Writer, WriterProfileDTO } from '../data/auth-dto';
 import { isPlatformBrowser } from '@angular/common';
@@ -11,15 +11,18 @@ import { WebSocketService } from '../components/web-socket-service';
 export class AuthService {
   private platformId = inject(PLATFORM_ID);
   private baseUrl = environment.baseUrl;
+ 
   constructor(private http: HttpClient,
   private webSocketService: WebSocketService
   ) {}
   
  public initializeAuthentication(): void {
- const token =  this.getAccessToken(); 
-    // Pass the token to the connect method
+    const token = this.getAccessToken(); 
+    // Pass the token to the WebSocketService
     this.webSocketService.connect(token);
   }
+
+
   register(body: any): Observable<any> {
     const fullUrl = `${environment.baseUrl}/auth/register`;
     return this.http.post<any>(fullUrl, body).pipe(
