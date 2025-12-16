@@ -1,12 +1,15 @@
 {
   "version": 2,
   "builds": [
-    { "src": "dist/dating_app/browser/**", "use": "@vercel/static" },
-    { "src": "dist/dating_app/server/server.mjs", "use": "@vercel/node" }
+    {
+      "src": "dist/dating_app/server/server.mjs",
+      "use": "@vercel/node"
+    }
   ],
   "routes": [
-    { "src": "/(login|signup|landing-page|writer-dashboard|client-home|buy-credit|forgot-password|reset)", "dest": "dist/dating_app/browser/$1/index.html" },
-    { "src": "/", "dest": "dist/dating_app/browser/index.html" },
-    { "src": "/(.*)", "dest": "dist/dating_app/server/server.mjs" }
+    {
+      "src": "/(.*)",
+      "dest": "dist/dating_app/server/server.mjs"
+    }
   ]
 }
