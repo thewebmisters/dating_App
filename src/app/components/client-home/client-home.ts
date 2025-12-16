@@ -77,7 +77,7 @@ closeProfileDialog() {
     if(this.userDetails.wallet.tokens <= 0){
 this.router.navigate(['/buy-credit']);
     }else{
-      this.router.navigate(['/client-chat']);
+      this.router.navigate(['/client-chat',profile.id]);
       this.dataService.setId(profile.id);
       sessionStorage.setItem('user',JSON.stringify(this.userDetails));
     }
