@@ -78,7 +78,7 @@ closeProfileDialog() {
 this.router.navigate(['/buy-credit']);
     }else{
       this.router.navigate(['/client-chat',profile.id]);
-      this.dataService.setId(profile.id);
+    //  this.dataService.setId(profile.id);
       sessionStorage.setItem('user',JSON.stringify(this.userDetails));
     }
     }

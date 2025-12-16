@@ -4,7 +4,7 @@ import { MessageService } from 'primeng/api';
 import { AuthService } from './../../services/auth-service';
 import { Component } from '@angular/core';
 import { ToastModule } from 'primeng/toast';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../../services/data-service';
@@ -37,13 +37,20 @@ export class Chatscreen {
     private dataService: DataService,
     private chatService: Chat,
     private webSocketService: WebSocketService,
-    private logbookService:LogbookService
+    private logbookService:LogbookService,
+    private route:ActivatedRoute
   ) {}
   ngOnInit() {
-    this.currentChatId = this.dataService.getChatId();
-    if (!this.currentChatId) {
-      this.router.navigate(['writer-dashboard']);
-      return;
+    // this.currentChatId = this.dataService.getChatId();
+    // if (!this.currentChatId) {
+    //   this.router.navigate(['writer-dashboard']);
+    //   return;
+    // }
+    const idFromUrl = this.route.snapshot.paramMap.get('id');
+    if(idFromUrl){
+      this.currentChatId =  parseInt(idFromUrl,10);//radix 10 avoids id starting with zero
+    }else{
+       this.router.navigate(['writer-dashboard']);
     }
     this.fetchLoggedInWriterDetails();
     this.writerId=this.writer?.id;

@@ -90,11 +90,11 @@ this.unclaimedChats =response;
   openChat(chat: ClaimedChat): void {
     // Pass the CHAT ID to the chat screen route
     //this.router.navigate(['/writer/chat', chat.id]);
-     this.dataService.setChatId(chat.id);
-     const chatsid=this.dataService.getChatId();
-     this.activeChatId = chat.id
+     //this.dataService.setChatId(chat.id);
+     //const chatsid=this.dataService.getChatId();
+    // this.activeChatId = chat.id
     //console.log('claimed Chat Id',chatsid)
-    this.router.navigate(['chat-screen']);
+    this.router.navigate(['chat-screen',chat.id]);
   }
   /**
    * Claims a chat and then refreshes the data.
@@ -108,10 +108,10 @@ this.unclaimedChats =response;
         this.fetchWriterClaimedChats();
         this.fetchUnclaimedChats();
         this.showUnclaimedDialog = false;
-        this.dataService.setChatId(chatId);
-        const chatsid=this.dataService.getChatId();
+       // this.dataService.setChatId(chatId);
+        //const chatsid=this.dataService.getChatId();
         //console.log('claimed Chat Id',chatsid)
-        this.router.navigate(['chat-screen']);
+        this.router.navigate(['chat-screen',chatId]);
       },
       error: (err) => {
         this.dataService.handleApiError(err);
