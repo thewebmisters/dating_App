@@ -1,10 +1,17 @@
+
 import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
-import { provideServerRendering } from '@angular/platform-server'; // <-- Import from @angular/platform-server
+import { provideServerRendering, ɵSERVER_CONTEXT as SERVER_CONTEXT } from '@angular/platform-server';
 import { appConfig } from './app.config';
 
 const serverConfig: ApplicationConfig = {
   providers: [
-    provideServerRendering() // <-- Just call the function with no arguments
+    provideServerRendering(),
+    // THIS IS THE KEY:
+    // We provide the SERVER_CONTEXT and explicitly disable prerendering.
+    {
+      provide: SERVER_CONTEXT,
+      useValue: { prerender: false },
+    },
   ]
 };
 
