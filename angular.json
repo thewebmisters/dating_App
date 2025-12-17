@@ -98,23 +98,7 @@
               "src/styles.css"
             ]
           }
-        },
-        "prerender": {
-  "builder": "@angular-devkit/build-angular:prerender",
-  "options": {
-    "routes": [
-      "/",
-      "/login",
-      "/signup",
-      "/landing-page",
-      "/writer-dashboard",
-      "/client-home",
-      "/buy-credit",
-      "/forgot-password",
-      "/reset"
-    ]
-  }
-}
+        }
 
       }
     }

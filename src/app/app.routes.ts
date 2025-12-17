@@ -23,8 +23,8 @@ export const routes: Routes = [
   { path: 'reset', component: ResetPassword },
 
   // Dynamic routes → SSR only
-  { path: 'chat-screen/:id', component: Chatscreen,  data: { renderMode: 'server'}},
-  { path: 'client-chat/:id', component: ClientChat,  data: { renderMode: 'server'} },
+  { path: 'chat-screen/:id', component: Chatscreen},
+  { path: 'client-chat/:id', component: ClientChat},
 
   // Default + wildcard
   { path: '', component: LandingPage },
