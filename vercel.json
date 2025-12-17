@@ -1,28 +1,23 @@
 {
   "version": 2,
-  "public": "public",
-  "builds": [
-    {
-      "src": "api/server.mjs",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "api/server.mjs"
+      "src": "/_next/static/(.*)",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      },
+      "dest": "static/$1"
     },
     {
-      "src": "/assets/(.*)",
-      "dest": "public/assets/$1"
-    },
-    {
-      "src": "/(.*\\..*)",
-      "dest": "public/$1"
+      "src": "/static/(.*)",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      },
+      "dest": "static/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "api/server.mjs"
+      "dest": "/api/server.mjs"
     }
   ]
 }
