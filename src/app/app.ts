@@ -3,9 +3,10 @@ import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {CardModule} from 'primeng/card';
 import { AuthService } from './services/auth-service';
+import { ToastModule } from 'primeng/toast';
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,CardModule,ButtonModule],
+  imports: [RouterOutlet, CardModule, ButtonModule,ToastModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import Aura from '@primeuix/themes/aura';
 import { routes } from './app.routes';
@@ -8,6 +8,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { MessageService } from 'primeng/api';
 import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { AuthInterceptor } from './auth-interceptor';
+import { ToastModule } from 'primeng/toast';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -17,7 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(
       withFetch(), 
-      withInterceptorsFromDi() 
+      withInterceptorsFromDi(),
     ), 
         {
           provide: HTTP_INTERCEPTORS,

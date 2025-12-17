@@ -3,14 +3,13 @@ import { FormBuilder, FormGroup, Validators,ReactiveFormsModule  } from '@angula
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { DataService } from '../../services/data-service';
-import { Toast } from "primeng/toast";
 import { MessageService } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-forgot-password',
-  imports: [ReactiveFormsModule, Toast, ProgressSpinnerModule, CommonModule],
+  imports: [ReactiveFormsModule,ProgressSpinnerModule, CommonModule],
   templateUrl: './forgot-password.html',
   styleUrl: './forgot-password.css'
 })

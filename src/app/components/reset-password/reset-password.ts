@@ -3,13 +3,12 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { DataService } from '../../services/data-service';
-import { Toast } from "primeng/toast";
 import { AuthService } from '../../services/auth-service';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-reset-password',
-  imports: [CommonModule, ReactiveFormsModule, Toast],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './reset-password.html',
   styleUrl: './reset-password.css',
 })
