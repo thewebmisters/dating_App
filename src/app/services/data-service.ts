@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { response } from 'express';
 import { MessageService } from 'primeng/api';
 
 @Injectable({
@@ -25,11 +24,14 @@ this.writerId=id;
 //common method for handling error response
 handleApiError(err:any){
  this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: err.error?.message  || 'Failed to load resource',
-      life: 3000,
-    });
+  severity: 'error',
+  summary: 'Error',
+  detail: err.error?.message || 'Failed to load resource',
+  life: 3000,
+  sticky: false,
+  closable: true
+});
+
   }
   handleFormError(err:any){
  this.messageService.add({

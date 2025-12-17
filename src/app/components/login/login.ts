@@ -5,12 +5,11 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { ToastModule } from 'primeng/toast';
 import { DataService } from '../../services/data-service';
 
 @Component({
   selector: 'app-login',
-  imports: [ToastModule, ButtonModule, CommonModule, ReactiveFormsModule],
+  imports: [ButtonModule, CommonModule, ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 

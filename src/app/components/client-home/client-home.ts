@@ -4,7 +4,6 @@ import { Component, Inject, inject, PLATFORM_ID } from '@angular/core';
 import {AvatarModule} from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { CardModule } from 'primeng/card';
-import { Toast } from 'primeng/toast';
 import { AuthenticatedUserDTO, Writer} from '../../data/auth-dto';
 import { Router } from '@angular/router';
 import { DialogModule } from 'primeng/dialog';
@@ -15,7 +14,7 @@ import { MessageService } from 'primeng/api';
   selector: 'app-client-home',
   templateUrl: './client-home.html',
   styleUrls: ['./client-home.css'],
-  imports: [AvatarModule, AvatarGroupModule, CardModule, CommonModule, Toast,DialogModule]
+  imports: [AvatarModule, AvatarGroupModule, CardModule, CommonModule,DialogModule]
 })
 export class ClientHome{
   userDetails!:AuthenticatedUserDTO;

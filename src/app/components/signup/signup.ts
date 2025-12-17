@@ -10,7 +10,6 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
-import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
@@ -18,7 +17,7 @@ import { DataService } from '../../services/data-service';
 
 @Component({
   selector: 'app-signup',
-  imports: [ReactiveFormsModule, CommonModule, ButtonModule, ToastModule],
+  imports: [ReactiveFormsModule, CommonModule, ButtonModule],
   templateUrl: './signup.html',
   styleUrl: './signup.css',
   providers: [MessageService],

@@ -9,11 +9,10 @@ import { AuthService } from '../../services/auth-service';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Dialog } from "primeng/dialog";
 import { Router } from '@angular/router';
-import { Toast } from "primeng/toast";
 import { WebSocketService } from '../web-socket-service';
 @Component({
   selector: 'app-writer-dashboard',
-  imports: [CommonModule, NgIf, Dialog, NgFor, Toast],
+  imports: [CommonModule, NgIf, Dialog, NgFor],
   templateUrl: './writer-dashboard.html',
   styleUrl: './writer-dashboard.css',
 })
@@ -68,7 +67,7 @@ this.authService.getUserDetails().subscribe({
         this.writerChats = response;
       },
       error: (err) => {
-        this.dataService.handleApiError(err);
+       // this.dataService.handleApiError(err);
       }
     });
   }
@@ -79,7 +78,7 @@ this.unclaimedChats =response;
 //console.log('unclaimed chats',this.unclaimedChats);
     },
     error:(err)=>{
-      this.dataService.handleApiError(err);
+      //this.dataService.handleApiError(err);
     }
   })
 }

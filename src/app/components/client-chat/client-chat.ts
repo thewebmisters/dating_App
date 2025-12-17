@@ -6,14 +6,13 @@ import { SendMessagePayload, Writer } from '../../data/auth-dto';
 import { AvatarModule } from 'primeng/avatar';
 import { Chat } from '../../services/chat';
 import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 import { AuthService } from '../../services/auth-service';
 import { DataService } from '../../services/data-service';
 import { WebSocketService } from '../web-socket-service';
 
 @Component({
   selector: 'app-client-chat',
-  imports: [FormsModule, CommonModule, AvatarModule, ToastModule],
+  imports: [FormsModule, CommonModule, AvatarModule],
   templateUrl: './client-chat.html',
   styleUrl: './client-chat.css',
 })
@@ -61,7 +60,7 @@ export class ClientChat {
       this.fetchProfileById(this.writerId);
     } else {
       // If there's no ID in the URL, something is wrong. Go back home.
-      console.error("No writer ID found in URL. Redirecting.");
+      //console.error("No writer ID found in URL. Redirecting.");
       this.router.navigate(['/client-home']);
     }
   }

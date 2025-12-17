@@ -3,7 +3,6 @@ import { AuthenticatedUserDTO, UserDTO, Writer } from './../../data/auth-dto';
 import { MessageService } from 'primeng/api';
 import { AuthService } from './../../services/auth-service';
 import { Component } from '@angular/core';
-import { ToastModule } from 'primeng/toast';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -13,7 +12,7 @@ import { WebSocketService } from '../web-socket-service';
 import { LogbookService } from '../../services/logbook-service';
 @Component({
   selector: 'app-chatscreen',
-  imports: [ToastModule, FormsModule, AvatarModule, CommonModule],
+  imports: [FormsModule, AvatarModule, CommonModule],
   templateUrl: './chatscreen.html',
   styleUrl: './chatscreen.css',
 })
