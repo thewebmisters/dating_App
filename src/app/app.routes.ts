@@ -21,8 +21,7 @@ export const routes: Routes = [
   { path: 'buy-credit', component: BuyCredit },
   { path: 'writer-dashboard', component: WriterDashboard },
   { path: 'reset', component: ResetPassword },
-
-  // Dynamic routes → SSR only
+// Dynamic routes → SSR only
   { path: 'chat-screen/:id', component: Chatscreen},
   { path: 'client-chat/:id', component: ClientChat},
 
