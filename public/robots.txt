@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Allow: /landing-page
+Allow: /signup
+Allow: /login
+Allow: /forgot-password
+
+# Disallow private/authenticated pages
+Disallow: /chat-screen/
+Disallow: /client-chat/
+Disallow: /writer-dashboard
+Disallow: /client-home
+Disallow: /buy-credit
+Disallow: /admin-panel
+
+# Sitemap
+Sitemap: https://yourdomain.com/sitemap.xml
