@@ -53,7 +53,7 @@ export class Signup {
         //email: ['', Validators.required],
         password: [
           '',
-          [Validators.required, Validators.minLength(8), Validators.pattern(this.passwordPattern)],
+          [Validators.required, Validators.minLength(8)],
         ],
         confirmPassword: ['', Validators.required],
       },
@@ -107,7 +107,7 @@ export class Signup {
 
   validateForm() {
     this.signupForm.markAllAsTouched();
-    if (!this.signupForm.valid) {
+    if (this.signupForm.invalid) {
       this.showError();
       return;
     }
