@@ -29,19 +29,15 @@
               "src/custom-theme.scss",
               "src/styles.css"
             ],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            "outputMode": "static"
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1.2MB"
+                  "maximumWarning": "1.5MB",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -55,6 +51,9 @@
                   "replace": "src/environments/environment.development.ts",
                   "with": "src/environments/environment.ts"
                 }
+              ],
+              "allowedCommonJsDependencies": [
+                "pusher-js"
               ]
             },
             "development": {
@@ -100,22 +99,21 @@
           }
         },
         "prerender": {
-  "builder": "@angular-devkit/build-angular:prerender",
-  "options": {
-    "routes": [
-      "/",
-      "/login",
-      "/signup",
-      "/landing-page",
-      "/writer-dashboard",
-      "/client-home",
-      "/buy-credit",
-      "/forgot-password",
-      "/reset"
-    ]
-  }
-}
-
+          "builder": "@angular-devkit/build-angular:prerender",
+          "options": {
+            "routes": [
+              "/",
+              "/login",
+              "/signup",
+              "/landing-page",
+              "/writer-dashboard",
+              "/client-home",
+              "/buy-credit",
+              "/forgot-password",
+              "/reset"
+            ]
+          }
+        }
       }
     }
   }

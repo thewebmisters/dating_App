@@ -6,10 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:dating_app": "node dist/dating_app/server/server.mjs",
- "build:vercel": "ng build --prerender=false"
- },
+    "test": "ng test"
+  },
   "prettier": {
     "printWidth": 100,
     "singleQuote": true,

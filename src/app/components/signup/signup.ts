@@ -14,6 +14,7 @@ import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { DataService } from '../../services/data-service';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-signup',
@@ -28,8 +29,8 @@ export class Signup {
   emailPattern: string = '^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
   passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]+$/;
   passwordLength: number = 8;
-  isLoading:boolean=false;
-  userDetails:any;
+  isLoading: boolean = false;
+  userDetails: any;
   passwordVisible: boolean = false;
   confirmPasswordVisible: boolean = false;
   constructor(
@@ -37,10 +38,11 @@ export class Signup {
     private messageService: MessageService,
     private router: Router,
     private authService: AuthService,
-    private dataService:DataService
-   
-  ) {}
+    private dataService: DataService,
+    private seoService: SeoService
+  ) { }
   ngOnInit() {
+    this.seoService.setSignupPageSEO();
     this.initializeSignupForm();
   }
   initializeSignupForm(): void {
@@ -63,11 +65,11 @@ export class Signup {
   passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
-     if (!password || !confirmPassword) return null;
-if (confirmPassword.errors && !confirmPassword.errors['passwordMismatch']) {
+    if (!password || !confirmPassword) return null;
+    if (confirmPassword.errors && !confirmPassword.errors['passwordMismatch']) {
       return null; // Preserve other errors
     }
-if (password.value !== confirmPassword.value) {
+    if (password.value !== confirmPassword.value) {
       confirmPassword.setErrors({ passwordMismatch: true });
       return { passwordMismatch: true };
     } else {
@@ -83,7 +85,7 @@ if (password.value !== confirmPassword.value) {
       life: 3000,
     });
   }
-  showSuccess(){
+  showSuccess() {
     this.messageService.add({
       severity: 'success',
       summary: 'Success',
@@ -91,10 +93,10 @@ if (password.value !== confirmPassword.value) {
       life: 3000,
     });
   }
-    /**
-   * Toggles the visibility of a password field.
-   * @param field The field to toggle ('password' or 'confirmPassword')
-   */
+  /**
+ * Toggles the visibility of a password field.
+ * @param field The field to toggle ('password' or 'confirmPassword')
+ */
   toggleVisibility(field: string): void {
     if (field === 'password') {
       this.passwordVisible = !this.passwordVisible;
@@ -120,26 +122,26 @@ if (password.value !== confirmPassword.value) {
       password_confirmation: formData?.confirmPassword,
       remember: '',
     };
-    this.isLoading=true;
+    this.isLoading = true;
     this.authService.register(body).subscribe({
       next: (response) => {
-         this.isLoading=false;
-         this.userDetails=response.user;
-if(response && response.token){
-       sessionStorage.setItem('token',response.token);
+        this.isLoading = false;
+        this.userDetails = response.user;
+        if (response && response.token) {
+          sessionStorage.setItem('token', response.token);
         }
-          if( this.userDetails.role==='user' ){
+        if (this.userDetails.role === 'user') {
           this.router.navigate(['client-home']);
-} else if(this.userDetails.role==='writer'){
-         this.router.navigate(['writer-dashboard']);
-          }else{
-           this.router.navigate(['client-home']);
-          }
-           
-},
+        } else if (this.userDetails.role === 'writer') {
+          this.router.navigate(['writer-dashboard']);
+        } else {
+          this.router.navigate(['client-home']);
+        }
+
+      },
       error: (err) => {
-          this.dataService.handleApiError(err);
-    this.isLoading=false;
+        this.dataService.handleApiError(err);
+        this.isLoading = false;
       },
     });
   }
