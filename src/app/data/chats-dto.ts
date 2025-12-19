@@ -56,9 +56,9 @@ export interface ClaimedChat {
   created_at: string | Date;
   updated_at: string | Date;
   user: AuthenticatedUserDTO;
-  profile: ChatProfile;       
-  messages: ChatMessage[];   
-  unread_count?: number;      
+  profile: ChatProfile;
+  messages: ChatMessage[];
+  unread_count?: number;
 }
 
 /**
@@ -85,7 +85,7 @@ export interface ChatProfile {
 export interface ChatMessage {
   id: number;
   chat_id: number;
-  sender_type: 'user' | 'profile'; 
+  sender_type: 'user' | 'profile';
   sender_id: number;
   content: string;
   original_content: string | null;
@@ -97,4 +97,41 @@ export interface ChatMessage {
   is_flagged: boolean;
   created_at: string | Date;
   updated_at: string | Date;
+}
+export interface MessageResponseDTO {
+  message: string;
+  data: MessagesDTO[]
+}
+export interface MessagesDTO {
+  id: number;
+  chat_id: number;
+  sender_id: number;
+  sender_type: string;
+  message: string;
+  has_filtered_content: boolean;
+  token_cost: number;
+  is_read: boolean;
+  attachments: [],
+  created_at: Date;
+  sender: {
+    id: number;
+    name: string;
+    email: string;
+    profile_photo: string;
+    age: number;
+    city: string;
+    country: string;
+    logbook: []
+  },
+  profile: {
+    id: number;
+    name: string;
+    age: number;
+    profile_photo: string;
+    is_online: true;
+    last_seen_at: Date;
+    city: string;
+    country: string;
+  }
+
 }
