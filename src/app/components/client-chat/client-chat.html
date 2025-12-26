@@ -23,12 +23,6 @@
         class="mr-2"
         size="large"
       ></p-avatar>
-      <!-- <img
-        src="https://images.unsplash.com/photo-1566753323558-f4e0952af115?auto=format&fit=crop&w=100&q=80"
-        class="rounded-circle border"
-        width="48"
-        height="48"
-      /> -->
     </div>
   </div>
 
@@ -56,9 +50,41 @@
           <span class="text-success small fw-semibold">{{ writerProfile.last_seen_at }}</span>
         </div>
       </div>
-      <i class="pi pi-ellipsis-v text-secondary fs-4"></i>
+      <p-menu #menu [model]="items" [popup]="true" />
+      <p-button (click)="menu.toggle($event)" icon="pi pi-ellipsis-v" />
     </div>
-
+    <!-- start of report user modal -->
+    <p-dialog
+      header="Report chat"
+      [modal]="true"
+      [(visible)]="visible"
+      [style]="{ width: '25rem' }"
+    >
+      <div class="flex items-center gap-4 mb-4">
+        <form [formGroup]="reportForm">
+          <div class="form-group">
+            <label for="reason" class="form-label">Reason</label>
+            <input type="text" class="form-control" id="reason" formControlName="reason" />
+          </div>
+          <div class="form-group mt-2">
+            <label for="description" class="form-label">Description</label>
+            <textarea
+              id="description"
+              class="form-control"
+              cols="5"
+              rows="3"
+              formControlName="description"
+            ></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="d-flex justify-content-end gap-2">
+        <button class="btn btn-outline-secondary" (click)="visible = false">Cancel</button>
+        <button class="btn btn-primary" 
+                [disabled]="reportForm.invalid"
+                (click)="reportUser()">Report</button>
+      </div>
+    </p-dialog>
     <!-- Messages -->
     <div
       id="messageArea"
@@ -72,9 +98,27 @@
         <!-- The sender_type is 'profile' or 'writer'  -->
         <div class="d-flex mb-3" *ngIf="msg.sender_id === writerProfile.id">
           <div class="bg-secondary p-3 rounded shadow-sm" style="max-width: 60%">
-            <!-- Use msg.content -->
-            <p class="mb-1" style="word-wrap: break-word">{{ msg?.message }}</p>
-            <!-- Use msg.created_at and the date pipe -->
+            <!-- Message content -->
+            <p class="mb-1" style="word-wrap: break-word" *ngIf="msg?.message">{{ msg?.message }}</p>
+            
+            <!-- Attachments -->
+            <div *ngIf="msg.attachments && msg.attachments.length > 0" class="mt-2">
+              <div *ngFor="let attachment of msg.attachments" class="mb-2">
+                <div *ngIf="attachment.type === 'image'">
+                  <img [src]="'data:' + attachment.mimeType + ';base64,' + attachment.data" 
+                       [alt]="attachment.filename" 
+                       class="img-fluid rounded"
+                       style="max-width: 200px; cursor: pointer;"
+                       (click)="openImageModal('data:' + attachment.mimeType + ';base64,' + attachment.data)">
+                </div>
+                <div *ngIf="attachment.type === 'file'" class="d-flex align-items-center">
+                  <i class="pi pi-file me-2"></i>
+                  <span class="small">{{ attachment.filename }} ({{ getFileSize(attachment.size) }})</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Timestamp -->
             <span class="text-muted small">{{ msg.created_at | date : 'shortTime' }}</span>
           </div>
         </div>
@@ -83,9 +127,27 @@
         <!-- The sender_id is the logged-in client's ID  -->
         <div class="d-flex justify-content-end mb-3" *ngIf="msg.sender_id === userDetails.id">
           <div class="text-white p-3 rounded bg-primary shadow-sm" style="max-width: 60%">
-            <!-- Use msg.content -->
-            <p class="mb-1" style="word-wrap: break-word">{{ msg.content }}</p>
-            <!-- Use msg.created_at and the date pipe -->
+            <!-- Message content -->
+            <p class="mb-1" style="word-wrap: break-word" *ngIf="msg.content">{{ msg.content }}</p>
+            
+            <!-- Attachments -->
+            <div *ngIf="msg.attachments && msg.attachments.length > 0" class="mt-2">
+              <div *ngFor="let attachment of msg.attachments" class="mb-2">
+                <div *ngIf="attachment.type === 'image'">
+                  <img [src]="'data:' + attachment.mimeType + ';base64,' + attachment.data" 
+                       [alt]="attachment.filename" 
+                       class="img-fluid rounded"
+                       style="max-width: 200px; cursor: pointer;"
+                       (click)="openImageModal('data:' + attachment.mimeType + ';base64,' + attachment.data)">
+                </div>
+                <div *ngIf="attachment.type === 'file'" class="d-flex align-items-center text-white">
+                  <i class="pi pi-file me-2"></i>
+                  <span class="small">{{ attachment.filename }} ({{ getFileSize(attachment.size) }})</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Timestamp -->
             <span class="small opacity-75">{{ msg.created_at | date : 'shortTime' }}</span>
           </div>
         </div>
@@ -94,7 +156,83 @@
 
     <!-- Input -->
     <div class="p-3 border-top bg-white">
+      <!-- Selected Files Preview (before processing) -->
+      <div *ngIf="selectedFiles.length > 0" class="mb-3">
+        <h6 class="small text-muted mb-2">Selected Files:</h6>
+        <div class="d-flex flex-wrap gap-2">
+          <div *ngFor="let file of selectedFiles; let i = index" 
+               class="position-relative border rounded p-2 bg-light">
+            <div class="d-flex align-items-center">
+              <img *ngIf="filePreviewUrls[file.name]" 
+                   [src]="filePreviewUrls[file.name]" 
+                   alt="Preview" 
+                   class="rounded me-2" 
+                   style="width: 40px; height: 40px; object-fit: cover;">
+              <i *ngIf="!filePreviewUrls[file.name]" class="pi pi-file me-2"></i>
+              <div>
+                <div class="small fw-semibold">{{ file.name }}</div>
+                <div class="small text-muted">{{ getFileSize(file.size) }}</div>
+              </div>
+            </div>
+            <button type="button" 
+                    class="btn-close position-absolute top-0 end-0" 
+                    (click)="removeSelectedFile(i)" 
+                    style="font-size: 0.7rem;"></button>
+          </div>
+        </div>
+        <div class="mt-2">
+          <button class="btn btn-sm btn-primary me-2" 
+                  [disabled]="isProcessingFiles"
+                  (click)="processFiles()">
+            <i class="pi pi-check me-1"></i>
+            {{ isProcessingFiles ? 'Processing...' : 'Process Files' }}
+          </button>
+          <button class="btn btn-sm btn-info me-2" 
+                  (click)="debugAttachments()">
+            <i class="pi pi-info-circle me-1"></i>
+            Debug
+          </button>
+          <button class="btn btn-sm btn-warning" 
+                  (click)="testSendWithAttachment()">
+            <i class="pi pi-send me-1"></i>
+            Test Send
+          </button>
+        </div>
+      </div>
+
+      <!-- Processed Attachments Preview (ready to send) -->
+      <div *ngIf="attachments.length > 0" class="mb-3">
+        <h6 class="small text-muted mb-2">Ready to Send:</h6>
+        <div class="d-flex flex-wrap gap-2">
+          <div *ngFor="let attachment of attachments; let i = index" 
+               class="position-relative border rounded p-2 bg-success bg-opacity-10">
+            <div class="d-flex align-items-center">
+              <i class="pi pi-check-circle text-success me-2"></i>
+              <div>
+                <div class="small fw-semibold">{{ attachment.filename }}</div>
+                <div class="small text-muted">{{ getFileSize(attachment.size) }}</div>
+              </div>
+            </div>
+            <button type="button" 
+                    class="btn-close position-absolute top-0 end-0" 
+                    (click)="removeAttachment(i)" 
+                    style="font-size: 0.7rem;"></button>
+          </div>
+        </div>
+      </div>
+
       <div class="input-group align-items-stretch">
+        <!-- File Upload Button -->
+        <label class="btn btn-outline-secondary d-flex align-items-center justify-content-center" 
+               style="cursor: pointer;">
+          <i class="pi pi-paperclip"></i>
+          <input type="file" 
+                 multiple 
+                 accept="image/*,.pdf,.txt,.doc,.docx" 
+                 (change)="onFileSelected($event)"
+                 style="display: none;">
+        </label>
+
         <textarea
           [(ngModel)]="chatInput"
           rows="1"
@@ -102,9 +240,10 @@
           placeholder="Type your message..."
           (keydown.enter)="sendMessage(); $event.preventDefault()"
         ></textarea>
+
         <button
           class="btn btn-primary d-flex align-items-center justify-content-center"
-          [disabled]="!chatInput.trim() || isSending"
+          [disabled]="(!chatInput.trim() && attachments.length === 0) || isSending"
           (click)="sendMessage()"
         >
           <i class="pi pi-send"></i>

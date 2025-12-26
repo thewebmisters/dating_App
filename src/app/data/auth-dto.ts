@@ -21,39 +21,39 @@ export interface userDetailsBody {
   email: string;
   password: string;
 }
-export interface Writer{
+export interface Writer {
+  id: number;
+  name: string;
+  age: number;
+  bio: string;
+  interests: string;
+  profile_photo: string;
+  country: string;
+  city: string;
+  is_online: boolean;
+  last_seen_at: string | Date;
+  is_active: boolean;
+  is_featured: false;
+  total_chats: number;
+  response_rate: number;
+  average_response_time: string | Date;
+  total_earnings: number;
+  created_at: string | Date;
+  updated_at: string | Date;
+  deleted_at: string | Date;
+  gallery: [
+    {
       id: number;
-      name: string;
-      age: number;
-      bio: string;
-      interests: string;
-      profile_photo: string;
-      country: string;
-      city: string;
-      is_online: boolean;
-      last_seen_at: string | Date;
-      is_active: boolean;
-      is_featured: false;
-      total_chats: number;
-      response_rate: number;
-      average_response_time: string | Date;
-      total_earnings: number;
+      profile_id: number;
+      image_path: string;
+      sort_order: number;
       created_at: string | Date;
       updated_at: string | Date;
-      deleted_at: string | Date;
-      gallery: [
-        {
-          id: number;
-          profile_id: number;
-          image_path: string;
-          sort_order: number;
-          created_at: string | Date;
-          updated_at: string | Date;
-        }
-      ]
+    }
+  ]
 }
 export interface WriterProfileDTO {
-  data:Writer[]
+  data: Writer[]
 }
 export interface AuthenticatedUserDTO {
   id: number;
@@ -98,32 +98,38 @@ export interface AuthenticatedUserDTO {
 export interface SendMessagePayload {
   profile_id: number;
   content: string;
-  attachments?: any[]; 
+  attachments?: {
+    type: 'image' | 'file';
+    data: string; // base64 encoded data
+    filename: string;
+    size: number;
+    mimeType: string;
+  }[];
 }
 
 // Interface for the successful API response
 export interface SendMessageResponse {
   message: string;
-  data: any; 
+  data: any;
 }
-export interface UnclaimedChatsResponse{
+export interface UnclaimedChatsResponse {
   message: string;
   data: UnclaimedChats[]
 }
-export interface UnclaimedChats{
-    id: number;
-      user_id: number;
-      profile_id: number;
-      status: string;
-      created_at: string | Date;
-      user: {
-      name: string;
-     },
-      profile: {
-        name: string;
-      },
-      last_message: {
-        content: string;
-        created_at: string | Date;
-      }
+export interface UnclaimedChats {
+  id: number;
+  user_id: number;
+  profile_id: number;
+  status: string;
+  created_at: string | Date;
+  user: {
+    name: string;
+  },
+  profile: {
+    name: string;
+  },
+  last_message: {
+    content: string;
+    created_at: string | Date;
+  }
 }

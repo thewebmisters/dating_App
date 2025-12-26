@@ -33,7 +33,13 @@ export interface PaginatedChatsResponse {
 }
 export interface SendWriterMessagePayload {
   content: string;
-  attachments?: any[];
+  attachments?: {
+    type: 'image' | 'file';
+    data: string; // base64 encoded data
+    filename: string;
+    size: number;
+    mimeType: string;
+  }[];
 }
 /**
  * Represents the entire API response from the GET /api/chats/claimed endpoint.

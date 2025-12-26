@@ -32,6 +32,7 @@ export class Chatscreen {
   replyText = '';
   minChars = 100;
   private channelName = '';
+  isReleasingChat = false;
   constructor(
     private authService: AuthService,
     private messageService: MessageService,
@@ -154,7 +155,10 @@ export class Chatscreen {
     if (this.sendDisabled || this.isSending) return;
     this.isSending = true;
 
-    const payload = { content: this.replyText.trim() };
+    const payload = {
+      content: this.replyText.trim(),
+      attachments: [] // Add attachments support here if needed
+    };
 
     this.chatService.sendWriterMessage(this.currentChatId, payload).subscribe({
       next: (response) => {
@@ -183,6 +187,37 @@ export class Chatscreen {
         this.router.navigate(['/login']);
       }
     })
+  }
+
+  /**
+   * Release the current chat (Writer Only)
+   */
+  releaseChat(): void {
+    if (this.isReleasingChat) return;
+
+    const confirmRelease = confirm('Are you sure you want to release this chat? You will no longer be able to respond to messages.');
+    if (!confirmRelease) return;
+
+    this.isReleasingChat = true;
+
+    this.chatService.releaseChat(this.currentChatId).subscribe({
+      next: (response) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Chat Released',
+          detail: 'Chat has been released successfully. Redirecting to dashboard...'
+        });
+
+        // Redirect to writer dashboard after 2 seconds
+        setTimeout(() => {
+          this.router.navigate(['/writer-dashboard']);
+        }, 2000);
+      },
+      error: (err) => {
+        this.isReleasingChat = false;
+        this.dataService.handleApiError(err);
+      }
+    });
   }
 
   get charCount() {
