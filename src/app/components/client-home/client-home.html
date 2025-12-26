@@ -11,8 +11,8 @@
       <!-- User Info -->
       <div class="d-flex align-items-center" *ngIf="userDetails">
         <div class="text-end me-3">
-          <p class="fw-semibold m-0">{{ userDetails.name }}</p>
-          <p class="text-primary fw-bold m-0">Tokens: {{ userDetails.wallet.tokens }}</p>
+          <p class="fw-semibold m-0">{{ userDetails?.name }}</p>
+          <p class="text-primary fw-bold m-0">Tokens: {{ getUserTokens() }}</p>
           <button class="btn btn-outline-danger btn-sm" (click)="logout()">
             <i class="pi pi-sign-out me-2"></i>
             Logout

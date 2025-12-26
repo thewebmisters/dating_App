@@ -16,10 +16,18 @@
         <div class="me-3 text-end">
           <p class="fw-semibold text-primary mb-1">{{ writer.name }}</p>
           <p class="text-success fw-bold mb-0">Balance: ${{ writer.wallet.balance }}</p>
-          <button class="btn btn-outline-danger btn-sm" (click)="logout()">
-            <i class="pi pi-sign-out me-2"></i>
-            Logout
-          </button>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-warning btn-sm" 
+                    (click)="releaseChat()"
+                    [disabled]="isReleasingChat">
+              <i class="pi pi-unlock me-2"></i>
+              {{ isReleasingChat ? 'Releasing...' : 'Release Chat' }}
+            </button>
+            <button class="btn btn-outline-danger btn-sm" (click)="logout()">
+              <i class="pi pi-sign-out me-2"></i>
+              Logout
+            </button>
+          </div>
         </div>
 
         <p-avatar
