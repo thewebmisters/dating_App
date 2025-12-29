@@ -163,4 +163,8 @@ export class WriterDashboard {
       }
     })
   }
+  navigateToAct(){
+        this.router.navigate(['/account']);
+    
+  }
 }

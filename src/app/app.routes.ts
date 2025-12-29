@@ -10,6 +10,7 @@ import { ClientHome } from './components/client-home/client-home';
 import { BuyCredit } from './components/buy-credit/buy-credit';
 import { WriterDashboard } from './components/writer-dashboard/writer-dashboard';
 import { ResetPassword } from './components/reset-password/reset-password';
+import { AccountSettings } from './components/account-settings/account-settings';
 
 export const routes: Routes = [
     { path: 'landing-page', component: LandingPage },
@@ -25,6 +26,7 @@ export const routes: Routes = [
     { path: 'client-chat/:id', component: ClientChat },
     { path: 'writer-dashboard', component: WriterDashboard },
     { path: 'reset', component: ResetPassword },
+    {path:'account',component:AccountSettings},
     // Redirect any invalid URL to '/home'
     { path: '', component: LandingPage },
     { path: '**', component: LandingPage }
