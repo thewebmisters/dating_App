@@ -12,48 +12,54 @@
           <span class="ms-3 badge bg-secondary-subtle text-dark fw-semibold">Writer Dashboard</span>
         </div>
         <div *ngIf="authUserDetails" class="d-flex align-items-center">
-          <a
-            href="#"
-            class="d-flex align-items-center text-decoration-none dropdown-toggle"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <div class="me-3 text-end">
-              <p class="fw-semibold text-primary mb-1">{{ authUserDetails.name }}</p>
-              <p class="text-success fw-bold mb-0">Balance: {{ authUserDetails.wallet.balance }}</p>
-              <!-- <button class="btn btn-outline-danger btn-sm" (click)="logout()">
-              <i class="pi pi-sign-out me-2"></i>
-              Logout
-            </button> -->
-            </div>
-            <img
-              [src]="authUserDetails.profile_photo"
-              class="rounded-circle border border-primary border-2"
-              width="48"
-              height="48"
-            />
-          </a>
-          <!-- This is the dropdown menu that appears on click -->
-          <ul class="dropdown-menu dropdown-menu-end shadow">
-            <li>
-              <!-- Link to the new Account Settings page -->
-              <button
-                type="button"
-                class="btn btn-sm dropdown-item d-flex align-items-center"
-                (click)="navigateToAct()"
-              >
-                <i class="pi pi-user-edit me-2"></i>
-                Account Settings
-              </button>
-            </li>
-            <li><hr class="dropdown-divider" /></li>
-            <li>
-              <a class="dropdown-item d-flex align-items-center text-danger" (click)="logout()">
-                <i class="pi pi-sign-out me-2"></i>
-                Logout
-              </a>
-            </li>
-          </ul>
+          <div class="dropdown">
+            <button
+              class="btn btn-link d-flex align-items-center text-decoration-none dropdown-toggle border-0 p-0"
+              type="button"
+              id="dropdownMenuButton"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              (click)="toggleDropdown($event)"
+            >
+              <div class="me-3 text-end">
+                <p class="fw-semibold text-primary mb-1">{{ authUserDetails.name }}</p>
+                <p class="text-success fw-bold mb-0">Balance: {{ authUserDetails.wallet.balance }}</p>
+              </div>
+              <img
+                [src]="authUserDetails.profile_photo"
+                class="rounded-circle border border-primary border-2"
+                width="48"
+                height="48"
+              />
+            </button>
+            <!-- This is the dropdown menu that appears on click -->
+            <ul class="dropdown-menu dropdown-menu-end shadow" 
+                [class.show]="isDropdownOpen"
+                aria-labelledby="dropdownMenuButton">
+              <li>
+                <!-- Link to the new Account Settings page -->
+                <button
+                  type="button"
+                  class="btn btn-sm dropdown-item d-flex align-items-center"
+                  (click)="navigateToAct(); closeDropdown()"
+                >
+                  <i class="pi pi-user-edit me-2"></i>
+                  Account Settings
+                </button>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <button 
+                  type="button"
+                  class="dropdown-item d-flex align-items-center text-danger border-0 bg-transparent w-100 text-start" 
+                  (click)="logout(); closeDropdown()"
+                >
+                  <i class="pi pi-sign-out me-2"></i>
+                  Logout
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       </header>
 

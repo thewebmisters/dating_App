@@ -1,6 +1,6 @@
 import Pusher from 'pusher-js';
 import { AuthenticatedUserDTO } from './../../data/auth-dto';
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Chat } from '../../services/chat';
 import { MessageService } from 'primeng/api';
 import { ClaimedChat } from '../../data/chats-dto';
@@ -24,6 +24,7 @@ export class WriterDashboard {
   showUnclaimedDialog = false;
   activeChatId: number | null = null;
   isReleasingChat: { [chatId: number]: boolean } = {};
+  isDropdownOpen = false;
   constructor(
     private chatService: Chat,
     private messageService: MessageService,
@@ -163,8 +164,25 @@ export class WriterDashboard {
       }
     })
   }
-  navigateToAct(){
-        this.router.navigate(['/account']);
-    
+  navigateToAct() {
+    this.router.navigate(['/account']);
+  }
+
+  toggleDropdown(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  closeDropdown(): void {
+    this.isDropdownOpen = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    // Close dropdown when clicking outside
+    if (this.isDropdownOpen) {
+      this.isDropdownOpen = false;
+    }
   }
 }

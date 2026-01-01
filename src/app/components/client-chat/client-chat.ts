@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SendMessagePayload, Writer } from '../../data/auth-dto';
@@ -39,6 +39,7 @@ export class ClientChat {
   attachments: Base64AttachmentData[] = [];
   isProcessingFiles = false;
   filePreviewUrls: { [key: string]: string } = {};
+  isDropdownOpen = false;
 
   // Access the navigation state in the constructor.
   constructor(
@@ -425,5 +426,31 @@ export class ClientChat {
         this.router.navigate(['/login']);
       }
     })
+  }
+
+  toggleDropdown(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  closeDropdown(): void {
+    this.isDropdownOpen = false;
+  }
+
+  navigateToAccount(): void {
+    this.router.navigate(['/account']);
+  }
+
+  navigateToBuyCredit(): void {
+    this.router.navigate(['/buy-credit']);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    // Close dropdown when clicking outside
+    if (this.isDropdownOpen) {
+      this.isDropdownOpen = false;
+    }
   }
 }
