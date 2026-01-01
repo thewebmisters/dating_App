@@ -2,7 +2,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { AuthenticatedUserDTO, UserDTO, Writer } from './../../data/auth-dto';
 import { MessageService } from 'primeng/api';
 import { AuthService } from './../../services/auth-service';
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -33,6 +33,7 @@ export class Chatscreen {
   minChars = 100;
   private channelName = '';
   isReleasingChat = false;
+  isDropdownOpen = false;
   constructor(
     private authService: AuthService,
     private messageService: MessageService,
@@ -187,6 +188,32 @@ export class Chatscreen {
         this.router.navigate(['/login']);
       }
     })
+  }
+
+  toggleDropdown(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  closeDropdown(): void {
+    this.isDropdownOpen = false;
+  }
+
+  navigateToAccount(): void {
+    this.router.navigate(['/account']);
+  }
+
+  navigateToWriterDashboard(): void {
+    this.router.navigate(['/writer-dashboard']);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    // Close dropdown when clicking outside
+    if (this.isDropdownOpen) {
+      this.isDropdownOpen = false;
+    }
   }
 
   /**

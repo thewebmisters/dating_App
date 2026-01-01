@@ -1,1 +1,117 @@
-<p>account-settings works!</p>
+<p-toast></p-toast>
+<div class="container my-5">
+  <div class="card">
+    <div class="d-flex justify-content-between align-items-center p-4 border-b">
+      <div class="d-flex align-items-center">
+        <button 
+          class="btn btn-outline-secondary me-3 d-flex align-items-center"
+          (click)="goBack()"
+          title="Go back to previous page"
+        >
+          <i class="pi pi-arrow-left me-2"></i>
+          {{ getBackButtonText() }}
+        </button>
+        <h2 class="text-3xl font-bold mb-0">Account Settings</h2>
+      </div>
+    </div>
+    
+    <p-tabs>
+      <!-- PROFILE TAB -->
+      <p-tabpanel header="Profile">
+        <div class="p-4">
+          <form [formGroup]="profileForm" (ngSubmit)="onProfileSubmit()">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              <!-- Profile Photo Section -->
+              <div class="text-center">
+                <img [src]="currentUser?.profile_photo " class="rounded-full w-40 h-40 object-cover mx-auto mb-4 border-4 border-gray-200" alt="photo">
+                <p-fileUpload
+                  mode="basic"
+                  name="photo"
+                  accept="image/*"
+                  [maxFileSize]="2000000"
+                  (onUpload)="onProfilePhotoUpload($event)"
+                  [auto]="true"
+                  chooseLabel="Upload Photo"
+                  [customUpload]="true"
+                ></p-fileUpload>
+              </div>
+
+              <!-- Form Fields Section -->
+              <div class="space-y-4">
+                <div class="flex flex-col gap-2">
+                  <label for="name">Name</label>
+                  <input pInputText id="name" formControlName="name" class="p-inputtext-lg" />
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label for="phone">Phone</label>
+                  <input pInputText id="phone" formControlName="phone" />
+                </div>
+                 <div class="flex flex-col gap-2">
+                  <label for="city">City</label>
+                  <input pInputText id="city" formControlName="city" />
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label for="country">Country</label>
+                  <input pInputText id="country" formControlName="country" />
+                </div>
+              </div>
+              
+              <!-- Bio Section (Full Width) -->
+              <div class="md:col-span-2 flex flex-col gap-2">
+                <label for="bio">Bio</label>
+                <textarea rows="5" pTextarea id="bio" formControlName="bio"></textarea>
+              </div>
+            </div>
+
+            <div class="text-right mt-6">
+              <p-button label="Save Profile" type="submit" [disabled]="profileForm.pristine"></p-button>
+            </div>
+          </form>
+        </div>
+      </p-tabpanel>
+
+      <!-- GALLERY TAB -->
+      <p-tabpanel header="Gallery">
+        <div class="p-4">
+          <p class="text-center text-gray-500">Gallery management coming soon...</p>
+          <!-- You would implement the gallery grid and upload logic here -->
+        </div>
+      </p-tabpanel>
+
+      <!-- SETTINGS TAB -->
+      <p-tabpanel header="Settings">
+         <div class="p-4">
+          <form [formGroup]="settingsForm" (ngSubmit)="onSettingsSubmit()">
+            <div class="space-y-6">
+              <div class="flex items-center justify-between p-3 border rounded-lg">
+                <div>
+                  <h4 class="font-semibold">Enable Notifications</h4>
+                  <p class="text-sm text-gray-500">Receive all notifications.</p>
+                </div>
+                <p-toggleSwitch formControlName="notifications_enabled"></p-toggleSwitch>
+              </div>
+              <div class="flex items-center justify-between p-3 border rounded-lg">
+                <div>
+                  <h4 class="font-semibold">Email Notifications</h4>
+                  <p class="text-sm text-gray-500">Receive notifications via email.</p>
+                </div>
+                <p-toggleSwitch formControlName="email_notifications"></p-toggleSwitch>
+              </div>
+              <div class="flex items-center justify-between p-3 border rounded-lg">
+                <div>
+                  <h4 class="font-semibold">Show Online Status</h4>
+                  <p class="text-sm text-gray-500">Let others see when you are online.</p>
+                </div>
+                <p-toggleSwitch formControlName="show_online_status"></p-toggleSwitch>
+              </div>
+            </div>
+            <div class="text-right mt-6">
+              <p-button label="Save Settings" type="submit" [disabled]="settingsForm.pristine"></p-button>
+            </div>
+          </form>
+        </div>
+      </p-tabpanel>
+    </p-tabs>
+  </div>
+</div>

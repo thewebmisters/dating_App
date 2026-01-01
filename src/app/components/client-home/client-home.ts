@@ -1,6 +1,6 @@
 import { AuthService } from './../../services/auth-service';
 import { CommonModule } from '@angular/common';
-import { Component, Inject, inject, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, inject, PLATFORM_ID, HostListener } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { CardModule } from 'primeng/card';
@@ -24,6 +24,7 @@ export class ClientHome {
   visible: boolean = false;
   isBioTruncated: boolean = true;
   readonly bioMaxLength: number = 50;
+  isDropdownOpen = false;
   constructor(private authService: AuthService,
     private router: Router,
     private dataService: DataService,
@@ -115,5 +116,31 @@ export class ClientHome {
         this.router.navigate(['/login']);
       }
     })
+  }
+
+  toggleDropdown(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  closeDropdown(): void {
+    this.isDropdownOpen = false;
+  }
+
+  navigateToAccount(): void {
+    this.router.navigate(['/account']);
+  }
+
+  navigateToBuyCredit(): void {
+    this.router.navigate(['/buy-credit']);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    // Close dropdown when clicking outside
+    if (this.isDropdownOpen) {
+      this.isDropdownOpen = false;
+    }
   }
 }
