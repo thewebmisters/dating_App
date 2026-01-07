@@ -11,20 +11,20 @@ import { PurchaseService } from '../../services/purchase-service';
 import { TokenPackageDto } from '../../data/tokens-dto';
 @Component({
   selector: 'app-buy-credit',
-  imports: [ButtonModule, AvatarModule, BadgeModule, CardModule, CommonModule,NgIf],
+  imports: [ButtonModule, AvatarModule, BadgeModule, CardModule, CommonModule, NgIf],
   templateUrl: './buy-credit.html',
   styleUrl: './buy-credit.css'
 })
 export class BuyCredit {
-   userDetails:any;
-   packages:TokenPackageDto[]=[];
+  userDetails: any;
+  packages: TokenPackageDto[] = [];
   constructor(
-    private router:Router,
-    private authService:AuthService,
-    private dataService:DataService,
-    private purchaseService:PurchaseService
-  ){}
-  ngOnInit(){
+    private router: Router,
+    private authService: AuthService,
+    private dataService: DataService,
+    private purchaseService: PurchaseService
+  ) { }
+  ngOnInit() {
     //   const user=sessionStorage.getItem('user');
     // if(user){
     //   this.userDetails=JSON.parse(user);
@@ -32,35 +32,35 @@ export class BuyCredit {
     //   this.userDetails=null;
     // }
 
- this.fetchAuthenticatedUsrDetails();
- this.getPackages();
+    this.fetchAuthenticatedUsrDetails();
+    this.getPackages();
   }
 
- fetchAuthenticatedUsrDetails():void{
-      this.authService.getUserDetails().subscribe({
-        next:(response)=>{
-          this.userDetails = response;
-         // console.log('user details',this.userDetails.wallet);
-          },
-          error:(err)=>{
- this.dataService.handleApiError(err);
+  fetchAuthenticatedUsrDetails(): void {
+    this.authService.getUserDetails().subscribe({
+      next: (response) => {
+        this.userDetails = response;
+        // console.log('user details',this.userDetails.wallet);
+      },
+      error: (err) => {
+        this.dataService.handleApiError(err);
       }
-      })
-    }
-    getPackages():void{
-      this.purchaseService.getPackages().subscribe({
-        next:(response)=>{
-this.packages=response.data;
-//console.log('packages',this.packages);
-        },
-        error:(err)=>{
-          this.dataService.handleApiError(err);
-        }
-      })
-    }
- 
-  navigateToClientScreen(){
-    this.router.navigate(['/client-home']);
+    })
+  }
+  getPackages(): void {
+    this.purchaseService.getPackages().subscribe({
+      next: (response) => {
+        this.packages = response.data;
+        //console.log('packages',this.packages);
+      },
+      error: (err) => {
+        this.dataService.handleApiError(err);
+      }
+    })
+  }
+
+  navigateToClientScreen() {
+    this.router.navigate(['/explore']);
   }
 }
 interface Package {

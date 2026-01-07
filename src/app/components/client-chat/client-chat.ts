@@ -80,7 +80,7 @@ export class ClientChat {
     } else {
       // If there's no ID in the URL, something is wrong. Go back home.
       //console.error("No writer ID found in URL. Redirecting.");
-      this.router.navigate(['/client-home']);
+      this.router.navigate(['/explore']);
     }
     this.items = [
       {
@@ -145,7 +145,7 @@ export class ClientChat {
     this.chatService.blockUser(payload).subscribe({
       next: (response) => {
         this.dataService.handleSuccess(response);
-        this.router.navigate(['/client-home']);
+        this.router.navigate(['/explore']);
       },
       error: (err) => {
         this.dataService.handleApiError(err);
@@ -412,18 +412,18 @@ export class ClientChat {
   }
 
   navigateToClientHome(): void {
-    this.router.navigate(['/client-home']);
+    this.router.navigate(['/explore']);
   }
 
   logout(): void {
     this.authService.logout().subscribe({
       next: (response) => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: response || 'logged out successfully' });
-        this.router.navigate(['/login']);
+        this.router.navigate(['/signin']);
       },
       error: (err) => {
         this.dataService.handleApiError(err);
-        this.router.navigate(['/login']);
+        this.router.navigate(['/signin']);
       }
     })
   }
@@ -439,11 +439,11 @@ export class ClientChat {
   }
 
   navigateToAccount(): void {
-    this.router.navigate(['/account']);
+    this.router.navigate(['/profile']);
   }
 
   navigateToBuyCredit(): void {
-    this.router.navigate(['/buy-credit']);
+    this.router.navigate(['/purchase']);
   }
 
   @HostListener('document:click', ['$event'])

@@ -47,14 +47,14 @@ export class Chatscreen {
   ngOnInit() {
     // this.currentChatId = this.dataService.getChatId();
     // if (!this.currentChatId) {
-    //   this.router.navigate(['writer-dashboard']);
+    //   this.router.navigate(['studio']);
     //   return;
     // }
     const idFromUrl = this.route.snapshot.paramMap.get('id');
     if (idFromUrl) {
       this.currentChatId = parseInt(idFromUrl, 10);//radix 10 avoids id starting with zero
     } else {
-      this.router.navigate(['writer-dashboard']);
+      this.router.navigate(['studio']);
     }
     this.fetchLoggedInWriterDetails();
     this.writerId = this.writer?.id;
@@ -181,11 +181,11 @@ export class Chatscreen {
     this.authService.logout().subscribe({
       next: (response) => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: response || 'logged out successfully' });
-        this.router.navigate(['/login']);
+        this.router.navigate(['/signin']);
       },
       error: (err) => {
         this.dataService.handleApiError(err);
-        this.router.navigate(['/login']);
+        this.router.navigate(['/signin']);
       }
     })
   }
@@ -201,11 +201,11 @@ export class Chatscreen {
   }
 
   navigateToAccount(): void {
-    this.router.navigate(['/account']);
+    this.router.navigate(['/profile']);
   }
 
   navigateToWriterDashboard(): void {
-    this.router.navigate(['/writer-dashboard']);
+    this.router.navigate(['/studio']);
   }
 
   @HostListener('document:click', ['$event'])
@@ -237,7 +237,7 @@ export class Chatscreen {
 
         // Redirect to writer dashboard after 2 seconds
         setTimeout(() => {
-          this.router.navigate(['/writer-dashboard']);
+          this.router.navigate(['/studio']);
         }, 2000);
       },
       error: (err) => {
