@@ -13,6 +13,7 @@ import { Button } from "primeng/button";
 import { MenuModule } from 'primeng/menu';
 import { Dialog, DialogModule } from "primeng/dialog";
 import { FileUploadService, AttachmentData, Base64AttachmentData } from '../../services/file-upload.service';
+import { ReportsService } from '../../services/reports.service';
 
 @Component({
   selector: 'app-client-chat',
@@ -28,6 +29,8 @@ export class ClientChat {
   chatInput: string = '';
   isLoading = true;
   writerId!: number;
+  messageId!: number;
+  reportedUserId!: number;
   userId: number | undefined = undefined;
   items: MenuItem[] | undefined;
   visible: boolean = false;
@@ -40,6 +43,7 @@ export class ClientChat {
   isProcessingFiles = false;
   filePreviewUrls: { [key: string]: string } = {};
   isDropdownOpen = false;
+  currentChatId: number | null = null;
 
   // Access the navigation state in the constructor.
   constructor(
@@ -52,6 +56,7 @@ export class ClientChat {
     private webSocketService: WebSocketService,
     private fb: FormBuilder,
     private fileUploadService: FileUploadService,
+    private reportsService: ReportsService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     const navigation = this.router.getCurrentNavigation();
@@ -99,7 +104,7 @@ export class ClientChat {
   initializeReportForm() {
     this.reportForm = this.fb.group({
       reason: ['', Validators.required],
-      description: ['', Validators.required]
+      description: ['', [Validators.required, Validators.maxLength(1000)]]
     })
   }
 
@@ -110,6 +115,12 @@ export class ClientChat {
       //console.log('subscribed to event',eventData.message);
       if (eventData.message && eventData.message.sender_id === this.writerProfile?.id) {
         this.messages.push(eventData.message);
+
+        // Capture chat ID from incoming messages
+        if (eventData.message.chat_id && !this.currentChatId) {
+          this.currentChatId = eventData.message.chat_id;
+        }
+
         this.scrollToBottom();
       } else {
         this.dataService.handleApiError("You Received a message for a different chat");
@@ -154,31 +165,60 @@ export class ClientChat {
   }
 
   showReportModal() {
+    // Try to get chat ID from existing messages if available
+    if (!this.currentChatId && this.messages.length > 0) {
+      const firstMessage = this.messages[0];
+      if (firstMessage && firstMessage.chat_id) {
+        this.currentChatId = firstMessage.chat_id;
+      }
+    }
+
     this.visible = true;
   }
 
   reportUser() {
+    this.reportForm.markAllAsTouched();
     if (this.reportForm.invalid) {
+      this.dataService.handleFormError('please fill all the required fields!')
+      return;
+    }
+
+    // Check if we have a chat ID
+    if (!this.currentChatId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Unable to report: Chat ID not found. Please send a message first.'
+      });
       return;
     }
 
     const formValues = this.reportForm.value;
     const payload = {
+      chat_id: this.currentChatId,
+      message_id: this.messageId,
+      reported_user_id: 1,
       reason: formValues.reason,
       description: formValues.description
     }
+    this.isLoading = true;
     this.chatService.reportChat(payload).subscribe({
       next: (response) => {
+        this.isLoading = false;
         this.dataService.handleSuccess(response);
         this.visible = false;
         this.reportForm.reset();
       },
       error: (err) => {
         this.dataService.handleApiError(err);
+        this.isLoading = false;
       }
     })
   }
-
+  closeReportModal(): void {
+    this.visible = false;
+    this.reportForm.reset();
+  }
   // ===== FILE HANDLING METHODS =====
 
   /**
@@ -342,10 +382,6 @@ export class ClientChat {
     }
 
     // Debug: Log attachments before sending
-    console.log('=== SENDING MESSAGE DEBUG ===');
-    console.log('Chat input:', this.chatInput);
-    console.log('Attachments count:', this.attachments.length);
-    console.log('Attachments data:', this.attachments);
 
     // Validate attachments have data
     this.attachments.forEach((attachment, index) => {
@@ -377,18 +413,22 @@ export class ClientChat {
 
     this.chatService.sendMessage(payload).subscribe({
       next: (response) => {
-        console.log('=== SERVER RESPONSE DEBUG ===');
-        console.log('Full server response:', JSON.stringify(response, null, 2));
-        console.log('Response attachments:', response.data?.attachments);
+
 
         //  On SUCCESS, push the new message from the server's response to our array
         this.messages.push(response.data);
+        this.messageId = response.data.id;
+        this.reportedUserId = response.data.writer_id;
+        // Capture chat ID from the response for reporting
+        if (response.data && response.data.chat_id) {
+          this.currentChatId = response.data.chat_id;
+        }
+
         this.isSending = false;
         setTimeout(() => this.scrollToBottom(), 100);
       },
       error: (err) => {
-        console.error('=== SEND MESSAGE ERROR ===');
-        console.error('Error details:', err);
+
         this.dataService.handleApiError(err);
         // Put the failed message back in the input box so the user can retry
         this.chatInput = payload.content;
