@@ -97,10 +97,10 @@ export class ClientHome {
       });
 
       setTimeout(() => {
-        this.router.navigate(['/buy-credit']);
+        this.router.navigate(['/purchase']);
       }, 2000);
     } else {
-      this.router.navigate(['/client-chat', profile.id]);
+      this.router.navigate(['/connect', profile.id]);
       // this.dataService.setId(profile.id);
       sessionStorage.setItem('user', JSON.stringify(this.userDetails));
     }
@@ -109,11 +109,11 @@ export class ClientHome {
     this.authService.logout().subscribe({
       next: (response) => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: response || 'logged out successfully' });
-        this.router.navigate(['/login']);
+        this.router.navigate(['/signin']);
       },
       error: (err) => {
         this.dataService.handleApiError(err);
-        this.router.navigate(['/login']);
+        this.router.navigate(['/signin']);
       }
     })
   }
@@ -129,11 +129,11 @@ export class ClientHome {
   }
 
   navigateToAccount(): void {
-    this.router.navigate(['/account']);
+    this.router.navigate(['/profile']);
   }
 
   navigateToBuyCredit(): void {
-    this.router.navigate(['/buy-credit']);
+    this.router.navigate(['/purchase']);
   }
 
   @HostListener('document:click', ['$event'])

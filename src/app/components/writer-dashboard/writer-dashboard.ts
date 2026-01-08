@@ -95,7 +95,7 @@ export class WriterDashboard {
     //const chatsid=this.dataService.getChatId();
     // this.activeChatId = chat.id
     //console.log('claimed Chat Id',chatsid)
-    this.router.navigate(['chat-screen', chat.id]);
+    this.router.navigate(['engage', chat.id]);
   }
   /**
    * Claims a chat and then refreshes the data.
@@ -112,7 +112,7 @@ export class WriterDashboard {
         // this.dataService.setChatId(chatId);
         //const chatsid=this.dataService.getChatId();
         //console.log('claimed Chat Id',chatsid)
-        this.router.navigate(['chat-screen', chatId]);
+        this.router.navigate(['engage', chatId]);
       },
       error: (err) => {
         this.dataService.handleApiError(err);
@@ -156,16 +156,16 @@ export class WriterDashboard {
     this.authService.logout().subscribe({
       next: (response) => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: response || 'logged out successfully' });
-        this.router.navigate(['/login']);
+        this.router.navigate(['/signin']);
       },
       error: (err) => {
         this.dataService.handleApiError(err);
-        this.router.navigate(['/login']);
+        this.router.navigate(['/signin']);
       }
     })
   }
   navigateToAct() {
-    this.router.navigate(['/account']);
+    this.router.navigate(['/profile']);
   }
 
   toggleDropdown(event: Event): void {

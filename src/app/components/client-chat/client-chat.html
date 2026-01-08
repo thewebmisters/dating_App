@@ -106,8 +106,18 @@
       <div class="flex items-center gap-4 mb-4">
         <form [formGroup]="reportForm">
           <div class="form-group">
-            <label for="reason" class="form-label">Reason</label>
-            <input type="text" class="form-control" id="reason" formControlName="reason" />
+            <label for="reason" class="form-label required">Reason</label>
+            <select class="form-select" id="reason" formControlName="reason">
+              <option value="" >Select a reason</option>
+              <option value="spam">Spam</option>
+              <option value="harassment">Harassment</option>
+              <option value="inappropriate_content">Inappropriate Content</option>
+              <option value="fake_profile">Fake Profile</option>
+              <option value="other">Other</option>
+            </select>
+            <div class="text-danger mt-1" *ngIf="reportForm.get('reason')?.invalid && (reportForm.get('reason')?.touched || reportForm.get('reason')?.dirty)">
+              <div *ngIf="reportForm.get('reason')?.errors?.['required']">This field is required!</div>
+            </div>
           </div>
           <div class="form-group mt-2">
             <label for="description" class="form-label">Description</label>
@@ -117,15 +127,27 @@
               cols="5"
               rows="3"
               formControlName="description"
+              placeholder="Please provide details about the issue (max 1000 characters)"
+              maxlength="1000"
             ></textarea>
+            <small class="text-muted">{{ reportForm.get('description')?.value?.length || 0 }}/1000 characters</small>
+ <div class="text-danger mt-1" *ngIf="reportForm.get('description')?.invalid && (reportForm.get('description')?.touched || reportForm.get('description')?.dirty)">
+              <div *ngIf="reportForm.get('description')?.errors?.['required']">This field is required!</div>
+            </div>
           </div>
         </form>
       </div>
       <div class="d-flex justify-content-end gap-2">
-        <button class="btn btn-outline-secondary" (click)="visible = false">Cancel</button>
-        <button class="btn btn-primary" 
-                [disabled]="reportForm.invalid"
-                (click)="reportUser()">Report</button>
+        <button class="btn btn-outline-secondary" (click)="closeReportModal()">Cancel</button>
+        <button class="btn btn-primary " 
+                (click)="reportUser()">
+                <ng-container *ngIf="!isLoading; else loadingSpinner">Report</ng-container>
+                <ng-template #loadingSpinner>
+                   <div class="spinner-border spinner-border-sm" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+                </ng-template>
+               </button>
       </div>
     </p-dialog>
     <!-- Messages -->

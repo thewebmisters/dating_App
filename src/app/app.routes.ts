@@ -13,23 +13,20 @@ import { ResetPassword } from './components/reset-password/reset-password';
 import { AccountSettings } from './components/account-settings/account-settings';
 
 export const routes: Routes = [
-    { path: 'landing-page', component: LandingPage },
-    { path: 'signup', component: Signup },
-    { path: 'login', component: Login },
-    { path: 'chat-screen/:id', component: Chatscreen },
-    // {path:'chat-screen',component:Chatscreen},
-    { path: 'forgot-password', component: ForgotPassword },
-    { path: 'admin-panel', component: AdminPanel },
-    { path: 'client-home', component: ClientHome },
-    { path: 'buy-credit', component: BuyCredit },
-    // {path:'client-chat',component:ClientChat},
-    { path: 'client-chat/:id', component: ClientChat },
-    { path: 'writer-dashboard', component: WriterDashboard },
+    { path: 'welcome', component: LandingPage },
+    { path: 'join', component: Signup },
+    { path: 'signin', component: Login },
+    { path: 'engage/:id', component: Chatscreen },
+    { path: 'recover', component: ForgotPassword },
+    { path: 'control', component: AdminPanel },
+    { path: 'explore', component: ClientHome },
+    { path: 'purchase', component: BuyCredit },
+    { path: 'connect/:id', component: ClientChat },
+    { path: 'studio', component: WriterDashboard },
     { path: 'reset', component: ResetPassword },
-    {path:'account',component:AccountSettings},
-    // Redirect any invalid URL to '/home'
+    { path: 'profile', component: AccountSettings },
+    // Redirect any invalid URL to '/welcome'
     { path: '', component: LandingPage },
     { path: '**', component: LandingPage }
-
 ];
 

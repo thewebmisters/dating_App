@@ -131,11 +131,11 @@ export class Signup {
           sessionStorage.setItem('token', response.token);
         }
         if (this.userDetails.role === 'user') {
-          this.router.navigate(['client-home']);
+          this.router.navigate(['explore']);
         } else if (this.userDetails.role === 'writer') {
-          this.router.navigate(['writer-dashboard']);
+          this.router.navigate(['studio']);
         } else {
-          this.router.navigate(['client-home']);
+          this.router.navigate(['explore']);
         }
 
       },
@@ -146,6 +146,6 @@ export class Signup {
     });
   }
   navigateToLogin(): void {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/signin']);
   }
 }
