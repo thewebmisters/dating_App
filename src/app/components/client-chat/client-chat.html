@@ -164,7 +164,7 @@
         <div class="d-flex mb-3" *ngIf="msg.sender_id === writerProfile.id">
           <div class="bg-secondary p-3 rounded shadow-sm" style="max-width: 60%">
             <!-- Message content -->
-            <p class="mb-1" style="word-wrap: break-word" *ngIf="msg?.message">{{ msg?.message }}</p>
+            <p class="mb-1" style="word-wrap: break-word" *ngIf="msg?.content || msg?.message">{{ msg?.content || msg?.message }}</p>
             
             <!-- Attachments -->
             <div *ngIf="msg.attachments && msg.attachments.length > 0" class="mt-2">

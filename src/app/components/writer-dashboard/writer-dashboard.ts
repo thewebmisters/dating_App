@@ -10,6 +10,7 @@ import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Dialog } from "primeng/dialog";
 import { Router } from '@angular/router';
 import { WebSocketService } from '../web-socket-service';
+import { LogbookService } from '../../services/logbook-service';
 @Component({
   selector: 'app-writer-dashboard',
   imports: [CommonModule, NgIf, Dialog, NgFor],
@@ -25,19 +26,23 @@ export class WriterDashboard {
   activeChatId: number | null = null;
   isReleasingChat: { [chatId: number]: boolean } = {};
   isDropdownOpen = false;
+  logEntries: any[] = [];
+  showLogbookDialog = false;
   constructor(
     private chatService: Chat,
     private messageService: MessageService,
     private dataService: DataService,
     private authService: AuthService,
     private router: Router,
-    private webSocketService: WebSocketService
+    private webSocketService: WebSocketService,
+    private logbookService: LogbookService
   ) { }
   ngOnInit() {
     //this.fetchWriterChats();
     this.fetchUnclaimedChats();
     this.fetchAuthUserDetails();
     this.fetchWriterClaimedChats();
+    this.loadLogbookEntries();
   }
   fetchAuthUserDetails(): void {
     this.authService.getUserDetails().subscribe({
@@ -104,6 +109,17 @@ export class WriterDashboard {
   claimChat(chatId: number): void {
     this.chatService.claimChat(chatId).subscribe({
       next: (claimedChat) => {
+        // Create logbook entry for chat claim
+        this.createLogbookEntry(
+          'chat_activity',
+          'Chat claimed',
+          `Claimed chat ${chatId}`,
+          {
+            chat_id: chatId,
+            action: 'claim'
+          }
+        );
+
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Chat claimed!' });
         // Refresh both lists to show the updated state
         this.fetchWriterClaimedChats();
@@ -133,6 +149,17 @@ export class WriterDashboard {
 
     this.chatService.releaseChat(chatId).subscribe({
       next: (response) => {
+        // Create logbook entry for chat release
+        this.createLogbookEntry(
+          'chat_activity',
+          'Chat released',
+          `Released chat ${chatId}`,
+          {
+            chat_id: chatId,
+            action: 'release'
+          }
+        );
+
         this.messageService.add({
           severity: 'success',
           summary: 'Chat Released',
@@ -184,5 +211,55 @@ export class WriterDashboard {
     if (this.isDropdownOpen) {
       this.isDropdownOpen = false;
     }
+  }
+
+  /**
+   * Load logbook entries for the current writer
+   */
+  loadLogbookEntries(): void {
+    if (!this.authUserDetails?.id) {
+      return;
+    }
+
+    this.logbookService.getEntriesByWriter(this.authUserDetails.id, 20).subscribe({
+      next: (response) => {
+        this.logEntries = response.data.data;
+        console.log('Writer logbook entries:', this.logEntries);
+      },
+      error: (err) => {
+        console.error('Failed to load logbook entries:', err);
+      }
+    });
+  }
+
+  /**
+   * Show logbook dialog
+   */
+  showLogbook(): void {
+    this.showLogbookDialog = true;
+  }
+
+  /**
+   * Create a logbook entry
+   */
+  createLogbookEntry(category: string, title: string, description: string, metadata?: any): void {
+    if (!this.authUserDetails?.id) return;
+
+    const payload = this.logbookService.createLogbookPayload(
+      category,
+      title,
+      description,
+      metadata
+    );
+
+    this.logbookService.createLogbookEntry(payload).subscribe({
+      next: (response) => {
+        console.log('Logbook entry created:', response);
+        this.loadLogbookEntries();
+      },
+      error: (err) => {
+        console.error('Failed to create logbook entry:', err);
+      }
+    });
   }
 }

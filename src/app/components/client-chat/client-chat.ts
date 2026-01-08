@@ -255,12 +255,12 @@ export class ClientChat {
   async processFiles(): Promise<void> {
     if (this.selectedFiles.length === 0) return;
 
-    console.log('Processing files:', this.selectedFiles);
+    //console.log('Processing files:', this.selectedFiles);
     this.isProcessingFiles = true;
 
     try {
       this.attachments = await this.fileUploadService.convertMultipleFiles(this.selectedFiles);
-      console.log('Processed attachments:', this.attachments);
+      // console.log('Processed attachments:', this.attachments);
 
       this.messageService.add({
         severity: 'success',
@@ -269,7 +269,7 @@ export class ClientChat {
       });
 
     } catch (error) {
-      console.error('File processing error:', error);
+      //console.error('File processing error:', error);
       this.messageService.add({
         severity: 'error',
         summary: 'Processing Error',
@@ -301,14 +301,14 @@ export class ClientChat {
    * Debug method to check attachments
    */
   debugAttachments(): void {
-    console.log('=== DEBUG ATTACHMENTS ===');
-    console.log('Selected files:', this.selectedFiles);
-    console.log('Processed attachments:', this.attachments);
-    console.log('File preview URLs:', this.filePreviewUrls);
+    // console.log('=== DEBUG ATTACHMENTS ===');
+    // console.log('Selected files:', this.selectedFiles);
+    // console.log('Processed attachments:', this.attachments);
+    // console.log('File preview URLs:', this.filePreviewUrls);
 
     // Test with a simple attachment
     if (this.attachments.length === 0) {
-      console.log('No attachments found. Creating test attachment...');
+      // console.log('No attachments found. Creating test attachment...');
       const testAttachment = {
         type: 'file' as const,
         data: 'VGVzdCBmaWxlIGNvbnRlbnQ=', // "Test file content" in base64
@@ -317,7 +317,7 @@ export class ClientChat {
         mimeType: 'text/plain'
       };
       this.attachments.push(testAttachment);
-      console.log('Test attachment added:', testAttachment);
+      // console.log('Test attachment added:', testAttachment);
     }
 
     this.messageService.add({
@@ -385,14 +385,14 @@ export class ClientChat {
 
     // Validate attachments have data
     this.attachments.forEach((attachment, index) => {
-      console.log(`Attachment ${index}:`, {
-        filename: attachment.filename,
-        type: attachment.type,
-        mimeType: attachment.mimeType,
-        size: attachment.size,
-        dataLength: attachment.data ? attachment.data.length : 0,
-        hasData: !!attachment.data
-      });
+      // console.log(`Attachment ${index}:`, {
+      //   filename: attachment.filename,
+      //   type: attachment.type,
+      //   mimeType: attachment.mimeType,
+      //   size: attachment.size,
+      //   dataLength: attachment.data ? attachment.data.length : 0,
+      //   hasData: !!attachment.data
+      // });
     });
 
     this.isSending = true;
@@ -403,8 +403,8 @@ export class ClientChat {
     };
 
     // Debug: Log full payload structure
-    console.log('=== PAYLOAD DEBUG ===');
-    console.log('Full payload:', JSON.stringify(payload, null, 2));
+    // console.log('=== PAYLOAD DEBUG ===');
+    // console.log('Full payload:', JSON.stringify(payload, null, 2));
 
     //  Clear the input immediately for a responsive feel
     this.chatInput = '';
