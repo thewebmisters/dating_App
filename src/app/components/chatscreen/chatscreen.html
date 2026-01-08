@@ -127,7 +127,7 @@
                 <img [src]="clientMessage.sender.profile_photo" class="rounded-circle" width="40" height="40" />
                 <div class="p-3 bg-white rounded rounded-start-0 shadow-sm" style="max-width: 60%">
                   <p class="mb-1 text-dark small" style="word-wrap: break-word">
-                    {{ msg?.message }}
+                    {{ msg?.message  }}
                   </p>
                   <p class="text-muted text-end small">
                     {{ msg?.created_at | date : 'shortTime' }}
@@ -145,7 +145,7 @@
                   class="p-3 bg-primary text-white rounded rounded-end-0 shadow-sm"
                   style="max-width: 60%"
                 >
-                  <p class="mb-1 small" style="word-wrap: break-word">{{ msg?.message }}</p>
+                  <p class="mb-1 small" style="word-wrap: break-word">{{ msg?.content || msg?.message }}</p>
                   <p class="text-light small">{{ msg?.created_at | date : 'shortTime' }}</p>
                 </div>
               </div>

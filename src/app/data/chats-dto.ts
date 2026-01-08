@@ -113,12 +113,20 @@ export interface MessagesDTO {
   chat_id: number;
   sender_id: number;
   sender_type: string;
-  message: string;
+  content?: string;  // For sendWriterMessage response
+  message?: string;  // For getChatMessages response
+  original_content?: string | null;
+  tokens_cost?: number;
+  writer_id?: number | null;
+  writer_earnings?: string;
   has_filtered_content: boolean;
   token_cost: number;
   is_read: boolean;
+  read_at?: string | Date | null;
+  is_flagged?: boolean;
   attachments: [],
   created_at: Date;
+  updated_at?: string | Date;
   sender: {
     id: number;
     name: string;
@@ -139,5 +147,4 @@ export interface MessagesDTO {
     city: string;
     country: string;
   }
-
 }

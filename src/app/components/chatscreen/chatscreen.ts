@@ -63,7 +63,7 @@ export class Chatscreen {
   subscribeToWriterChannel(writerId: number): void {
     this.channelName = `App.Models.User.${writerId}`;
     this.webSocketService.listen(this.channelName, '.NewMessage', (eventData: any) => {
-      //  console.log('📨 New message for this chat:',eventData.message.message);
+      //  console.log('📨 New message for this chat:',eventData.message.content);
       // console.log('📨 New message for this chat:', eventData);
       // Check if the incoming message belongs to the currently open chat
       if (eventData.message && eventData.message.chat_id === this.currentChatId) {
@@ -119,8 +119,6 @@ export class Chatscreen {
     this.chatService.getChatMessages(this.currentChatId).subscribe({
       next: (messagesResponse) => {
         this.messages = messagesResponse.data;
-        //console.log('Initial messages loaded:', this.messages);
-
         this.chatService.markAsRead(this.currentChatId).subscribe();
         this.isLoading = false;
         setTimeout(() => this.scrollToBottom(), 100);
@@ -128,20 +126,10 @@ export class Chatscreen {
           // Get sender_id from the first message (assuming all messages in a chat have the same client)
           this.clientMessage = this.messages.find(msg => msg.sender_type === 'user');
           this.profileDetails = this.messages.find(p => p.sender_type === 'profile');
-          console.log('client is', this.clientMessage);
-          const senderId = this.clientMessage ? this.clientMessage.sender_id : this.messages[0].sender.id;
+          // console.log('client is', this.clientMessage);
 
-          this.logbookService.getLogbookForUser(senderId).subscribe({
-            next: (logbookData) => {
-              this.logEntries = logbookData;
-              console.log('client logbook is', logbookData)
-              this.isLoading = false;
-            },
-            error: (err) => {
-              this.dataService.handleApiError(err);
-              this.isLoading = false;
-            }
-          });
+          // Load logbook entries for the current writer
+          this.loadLogbookEntries();
         }
       },
       error: (err) => {
@@ -163,9 +151,21 @@ export class Chatscreen {
 
     this.chatService.sendWriterMessage(this.currentChatId, payload).subscribe({
       next: (response) => {
-        //  console.log('ressponse is',response)
         // Adding the new message returned from the server to our array
         this.messages.push(response.data);
+
+        // Create logbook entry for message activity (temporarily disabled)
+        // this.createLogbookEntry(
+        //   'message_activity',
+        //   'Message sent',
+        //   `Sent message in chat ${this.currentChatId}`,
+        //   {
+        //     chat_id: this.currentChatId,
+        //     message_id: response.data.id,
+        //     content_length: payload.content.length
+        //   }
+        // );
+
         this.replyText = '';
         this.isSending = false;
         setTimeout(() => this.scrollToBottom(), 100);
@@ -217,6 +217,55 @@ export class Chatscreen {
   }
 
   /**
+   * Load logbook entries for the current writer
+   */
+  loadLogbookEntries(): void {
+    if (!this.writer?.id) {
+      this.isLoading = false;
+      return;
+    }
+
+    // Get logbook entries for this writer
+    this.logbookService.getEntriesByWriter(this.writer.id, 20).subscribe({
+      next: (response) => {
+        this.logEntries = response.data.data;
+        //  console.log('Writer logbook entries:', this.logEntries);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        //   console.error('Failed to load logbook entries:', err);
+        this.dataService.handleApiError(err);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  /**
+   * Create a logbook entry for chat activities
+   */
+  createLogbookEntry(category: string, title: string, description: string, metadata?: any): void {
+    if (!this.writer?.id) return;
+
+    const payload = this.logbookService.createLogbookPayload(
+      category,
+      title,
+      description,
+      metadata
+    );
+
+    this.logbookService.createLogbookEntry(payload).subscribe({
+      next: (response) => {
+        //console.log('Logbook entry created:', response);
+        // Refresh logbook entries
+        this.loadLogbookEntries();
+      },
+      error: (err) => {
+        this.dataService.handleApiError(err);
+      }
+    });
+  }
+
+  /**
    * Release the current chat (Writer Only)
    */
   releaseChat(): void {
@@ -229,6 +278,17 @@ export class Chatscreen {
 
     this.chatService.releaseChat(this.currentChatId).subscribe({
       next: (response) => {
+        // Create logbook entry for chat release
+        this.createLogbookEntry(
+          'chat_activity',
+          'Chat released',
+          `Released chat ${this.currentChatId}`,
+          {
+            chat_id: this.currentChatId,
+            release_reason: 'manual_release'
+          }
+        );
+
         this.messageService.add({
           severity: 'success',
           summary: 'Chat Released',
@@ -253,6 +313,34 @@ export class Chatscreen {
 
   get sendDisabled() {
     return this.replyText.length < this.minChars;
+  }
+
+  /**
+   * Helper method to get message content from different API response formats
+   */
+  getMessageContent(msg: MessagesDTO): string {
+    // Log the message structure for debugging
+    // console.log('Getting content for message:', {
+    //   id: msg.id,
+    //   content: msg.content,
+    //   message: (msg as any).message,
+    //   hasContent: !!msg.content,
+    //   hasMessage: !!(msg as any).message
+    // });
+
+    // Try content first (from sendWriterMessage API)
+    if (msg.content) {
+      return msg.content;
+    }
+
+    // Try message field (from getChatMessages API)
+    if ((msg as any).message) {
+      return (msg as any).message;
+    }
+
+    // Fallback to empty string if neither field exists
+    //console.warn('No content found for message:', msg);
+    return '';
   }
 }
 interface Message {
