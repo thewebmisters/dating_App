@@ -1,3 +1,8 @@
 #messageArea {
-height: calc(100vh - 220px);
+    height: calc(100vh - 220px);
+}
+
+.required::after {
+    content: '*';
+    color: red;
 }

@@ -126,11 +126,6 @@ export class Chat {
     return this.http.post<any>(fullUrl, payload)
   }
 
-  reportChat(payload: any): Observable<any> {
-    const fullUrl = `${this.baseUrl}/reports`;
-    return this.http.post<any>(fullUrl, payload)
-  }
-
   // ===== NEW MISSING METHODS =====
 
   /**
@@ -157,7 +152,10 @@ export class Chat {
     const fullUrl = `${this.baseUrl}/chats/${chatId}/release`;
     return this.http.post(fullUrl, {});
   }
-
+  reportChat(payload: any): Observable<any> {
+    const fullUrl = `${this.baseUrl}/reports`;
+    return this.http.post(fullUrl, payload);
+  }
   // ===== BLOCKED USERS API =====
 
   /**

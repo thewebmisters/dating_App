@@ -75,11 +75,11 @@ export class Login {
           sessionStorage.setItem('token', response.token);
         }
         if (response.role === 'user') {
-          this.router.navigate(['client-home']);
+          this.router.navigate(['explore']);
         } else if (response.role === 'writer') {
-          this.router.navigate(['writer-dashboard']);
+          this.router.navigate(['studio']);
         } else {
-          this.router.navigate(['client-home']);
+          this.router.navigate(['explore']);
         }
 
       },
@@ -92,9 +92,9 @@ export class Login {
   }
 
   navigateToSignUp(): void {
-    this.router.navigate(['signup']);
+    this.router.navigate(['join']);
   }
   navigateToPsdScreen(): void {
-    this.router.navigate(['forgot-password']);
+    this.router.navigate(['recover']);
   }
 }

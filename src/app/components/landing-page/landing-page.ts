@@ -23,6 +23,6 @@ export class LandingPage {
   }
 
   navigateToAuth(): void {
-    this.router.navigate(['/signup']);
+    this.router.navigate(['/join']);
   }
 }
