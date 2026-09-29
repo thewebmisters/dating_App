@@ -18,7 +18,6 @@ export class ResetPassword {
   passwordVisible: boolean = false;
   emailPattern: string = '^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
   constructor(private fb: FormBuilder,
-    private messageService: MessageService,
     private dataService: DataService,
     private authService: AuthService,
     private router: Router
