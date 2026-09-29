@@ -197,7 +197,7 @@ export class ClientChat {
     const payload = {
       chat_id: this.currentChatId,
       message_id: this.messageId,
-      reported_user_id: 1,
+      // reported_user_id: 1,
       reason: formValues.reason,
       description: formValues.description
     }
